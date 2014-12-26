@@ -1,8 +1,12 @@
 package com.yeleman.culture_droid;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -10,6 +14,8 @@ import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
+import android.view.Choreographer;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,8 +63,7 @@ public class CultureHome extends ActionBarActivity
         mTitle = getTitle();
 
         // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
+        mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
@@ -74,19 +79,17 @@ public class CultureHome extends ActionBarActivity
     public void onSectionAttached(int number) {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
+        final FragmentTransaction ft = fragmentManager.beginTransaction();
 
         switch (number) {
+
             case 1:
+                ft.replace(R.id.container, About.newInstance(number + 1)).commit();
                 mTitle = getString(R.string.about);
-                fragmentManager
-                        .beginTransaction()
-                        .replace(R.id.container, About.newInstance(number + 1)).commit();
                 break;
             case 2:
+                ft.replace(R.id.container, News.newInstance(number + 2)).commit();
                 mTitle = getString(R.string.news);
-                fragmentManager
-                        .beginTransaction()
-                        .replace(R.id.container, News.newInstance(number + 2)).commit();
                 break;
             case 3:
                 mTitle = getString(R.string.culture);
@@ -118,7 +121,6 @@ public class CultureHome extends ActionBarActivity
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -193,7 +195,7 @@ public class CultureHome extends ActionBarActivity
      */
     public static class About extends Fragment {
 
-        private static final String ARG_SECTION_NUMBER_1 = "section_number_1";
+        private static final String ARG_SECTION_NUMBER_1 = "about";
 
         public static About newInstance(int sectionNumber) {
             About fragment = new About();
@@ -216,26 +218,24 @@ public class CultureHome extends ActionBarActivity
 
         @Override
         public void onAttach(Activity activity) {
+            Log.d(TAG, "onAttach About");
             super.onAttach(activity);
-            ((CultureHome) activity).onSectionAttached(getArguments().getInt(
-                    ARG_SECTION_NUMBER_1));
         }
     }
+
     /**
      * News
      */
     public static class News extends Fragment {
 
-        private static final String ARG_SECTION_NUMBER_1 = "section_number_2";
-        private ListView mList;
+        private static final String ARG_SECTION_NUMBER_2 = "News";
         private ListView mListView;
-        private ArrayAdapter<NewsData> listAdapter ;
         private SimpleAdapter adapter;
 
         public static News newInstance(int sectionNumber) {
             News fragment = new News();
             Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER_1, sectionNumber);
+            args.putInt(ARG_SECTION_NUMBER_2, sectionNumber);
             fragment.setArguments(args);
             return fragment;
         }
@@ -246,7 +246,7 @@ public class CultureHome extends ActionBarActivity
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.news, container, false);
+            final View rootView = inflater.inflate(R.layout.news, container, false);
             new GetRssFeed().execute("http://quandlevillagesereveille.wordpress.com/feed/");
 
             String[] from = {"title", "description", "date"};
@@ -259,12 +259,12 @@ public class CultureHome extends ActionBarActivity
             mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
-
                     HashMap<String, Object> hm = (HashMap<String, Object>) adapter.getItem((int) id);
                     String selectId = (String) hm.get("id");
                     Log.d(TAG, selectId + " has selected");
-                   // Intent a = new Intent(CultureHome.this, About.class);
-                   // startActivity(a);
+                    Intent a = new Intent(getActivity(), Details.class);
+                    a.putExtra("selectId", selectId);
+                    startActivity(a);
                 }
             });
             mListView.setAdapter(adapter);
@@ -273,22 +273,22 @@ public class CultureHome extends ActionBarActivity
 
         List<Map<String, ?>> getData() {
             List<Map<String, ?>> list = new ArrayList<Map<String, ?>>();
-            List<NewsData> reports;
+            List<NewsData> newsList;
 
-            reports = Select.from(NewsData.class).orderBy("title").list();
-            for (NewsData rpt: reports){
-                //Date date = rpt.getpubDate();
+            newsList = Select.from(NewsData.class).orderBy("id").list();
+            for (NewsData news: newsList){
                 Map map = new HashMap();
-                map.put("id", String.valueOf(rpt.getId()));
-                map.put("title", rpt.getTitle());
-                map.put("description", Html.fromHtml(rpt.getDescription()));
-                map.put("date", rpt.getpubDate());
+                map.put("id", String.valueOf(news.getId()));
+                map.put("title", news.getTitle());
+                map.put("description", Html.fromHtml(news.getDescription()));
+                map.put("date", news.getpubDate());
                 list.add(map);
             }
             return list;
         }
 
         private class GetRssFeed extends AsyncTask<String, Void, Void> {
+
             @Override
             protected Void doInBackground(String... params) {
                 Log.d(TAG, "doInBackground" + " " + params[0]);
@@ -298,30 +298,34 @@ public class CultureHome extends ActionBarActivity
 
                     ArrayList<RssItem> rssItems = feed.getRssItems();
                     for (RssItem item : rssItems) {
-                        Log.i(TAG, item.getTitle());
+                        //Log.i(TAG, item.getLink());
+                        //Log.d(TAG, item.getDescription());
                         List<NewsData> news = NewsData.find(NewsData.class, "title = ?", item.getTitle());
                         if (news.isEmpty()){
-                            NewsData newsData = new NewsData(item.getPubDate(),
-                                                            item.getTitle(),
-                                                            item.getDescription(),
-                                                            item.getContent(),
-                                                            "status",
-                                                            "category");
+                            NewsData newsData = new NewsData(
+                                    item.getPubDate(),
+                                    item.getTitle(),
+                                    item.getDescription(),
+                                    item.getContent(),
+                                    item.getLink(),
+                                    "category");
                             newsData.save();
                         } else {
-                            Log.d(TAG, "Existe déjà dans la base");
+                            //Log.d(TAG, "Existe déjà dans la base");
                         }
-                       }
+                   }
                 } catch (Exception e) {
                     Log.v(TAG, String.valueOf(e));
-                }
+                  }
                 return null;
             }
+
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
                 adapter.notifyDataSetChanged();
                 mListView.setAdapter(adapter);
+
             }
         }
 
@@ -333,9 +337,30 @@ public class CultureHome extends ActionBarActivity
 
         @Override
         public void onAttach(Activity activity) {
+            Log.d(TAG, "onAttach News");
             super.onAttach(activity);
-            ((CultureHome) activity).onSectionAttached(getArguments().getInt(
-                    ARG_SECTION_NUMBER_1));
         }
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch(keyCode){
+            case KeyEvent.KEYCODE_BACK :
+                new AlertDialog.Builder(this)
+                        .setTitle("Quitter")
+                        .setMessage("Voulez vous vraiment quitter ?")
+                        .setPositiveButton(android.R.string.ok,
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                        System.exit(0);
+                                }})
+                        .setNegativeButton(android.R.string.cancel,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {}
+                                }).create().show();
+                return true;
+        }
+        return false;
+    }
+
 }

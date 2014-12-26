@@ -14,7 +14,7 @@ public class NewsData extends SugarRecord {
     private String title;
     private Date pubDate;
     private String description;
-    private String status;
+    private String link;
     private String category;
     private String content;
 
@@ -24,14 +24,14 @@ public class NewsData extends SugarRecord {
     public NewsData(Date pubDate,
                     String title,
                     String description,
-                    String category,
-                    String status,
-                    String content) {
+                    String content,
+                    String link,
+                    String category) {
         this.pubDate = pubDate;
         this.title = title;
         this.description = description;
         this.category = category;
-        this.status = status;
+        this.link = link;
         this.content = content;
     }
 
@@ -42,12 +42,13 @@ public class NewsData extends SugarRecord {
     public void setContent(String content) {
         this.content = content;
     }
+
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setLink(String link) {
+        this.link = link;
     }
 
     public void setCategory(String category) {
@@ -61,6 +62,7 @@ public class NewsData extends SugarRecord {
     public String getTitle() {
         return this.title;
     }
+
     public String getCategory() {
         return this.category;
     }
@@ -71,11 +73,13 @@ public class NewsData extends SugarRecord {
 
     public Date getpubDate() {return this.pubDate; }
 
-    public String getStatus() {
-        return this.status;
+    public String getLink() {
+        return this.link;
     }
 
     public String getContent() {
         return this.content;
     }
+
+
 }

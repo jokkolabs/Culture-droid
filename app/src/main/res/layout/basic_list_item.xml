@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants"
+    android:background="@android:drawable/dialog_holo_light_frame"
     android:id="@+id/rowLinearLayout"
     android:orientation="horizontal">
 
@@ -10,7 +11,6 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="10dp"
         android:clickable="false"
         android:autoText="false"
         android:textColor="#1C22CD"
@@ -19,15 +19,17 @@
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large.Inverse"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/description"
-        android:layout_alignEnd="@+id/description" />
+        android:layout_alignRight="@+id/dateP"
+        android:layout_alignEnd="@+id/dateP"
+        android:padding="10dp" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/description"
         android:layout_below="@+id/title"
         android:layout_marginLeft="10dp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_marginRight="10dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -37,6 +39,7 @@
         android:gravity="center_horizontal|end"
         android:layout_below="@+id/description"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:paddingRight="10dp" />
 </RelativeLayout>
 
