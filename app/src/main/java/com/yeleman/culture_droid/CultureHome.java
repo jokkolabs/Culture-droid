@@ -3,8 +3,14 @@ package com.yeleman.culture_droid;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
@@ -13,6 +19,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Choreographer;
 import android.view.KeyEvent;
@@ -24,19 +31,31 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.orm.query.Select;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.LoggingPermission;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 
 public class CultureHome extends ActionBarActivity
@@ -89,7 +108,7 @@ public class CultureHome extends ActionBarActivity
                 break;
             case 2:
                 ft.replace(R.id.container, News.newInstance(number + 2)).commit();
-                mTitle = getString(R.string.news);
+                mTitle = getString(R.string.all_article);
                 break;
             case 3:
                 mTitle = getString(R.string.culture);
@@ -230,7 +249,7 @@ public class CultureHome extends ActionBarActivity
 
         private static final String ARG_SECTION_NUMBER_2 = "News";
         private ListView mListView;
-        private SimpleAdapter adapter;
+        private Context context;
 
         public static News newInstance(int sectionNumber) {
             News fragment = new News();
@@ -244,95 +263,129 @@ public class CultureHome extends ActionBarActivity
         }
 
         @Override
+        public void onResume() {
+            super.onResume();
+            setupUI();
+        }
+
+        @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             final View rootView = inflater.inflate(R.layout.news, container, false);
-            new GetRssFeed().execute("http://quandlevillagesereveille.wordpress.com/feed/");
-
-            String[] from = {"title", "description", "date"};
-            int[] to = {R.id.title, R.id.description, R.id.dateP};
 
             mListView = (ListView) rootView.findViewById(R.id.list);
-            List<Map<String, ?>> data = getData();
-            adapter = new SimpleAdapter(container.getContext(), data, R.layout.basic_list_item, from, to);
 
-            mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                public void onItemClick(AdapterView<?> parent, View view,
-                                        int position, long id) {
-                    HashMap<String, Object> hm = (HashMap<String, Object>) adapter.getItem((int) id);
-                    String selectId = (String) hm.get("id");
-                    Log.d(TAG, selectId + " has selected");
-                    Intent a = new Intent(getActivity(), Details.class);
-                    a.putExtra("selectId", selectId);
-                    startActivity(a);
+            String urlJson = Constants.getUrl("articles.json");
+            context = container.getContext();
+            new GetJson().execute(urlJson);
+
+            ArticleElement articleElement;
+            ArrayList<ArticleElement> articleElements = new ArrayList<ArticleElement>();
+            List<NewsData> newsDataList;
+            newsDataList = Select.from(NewsData.class).orderBy("id").list();
+
+            for (NewsData news : newsDataList) {
+                articleElement = new ArticleElement();
+                articleElement.setArticleId(Integer.parseInt(String.valueOf(news.getArticleId())));
+                if (String.valueOf(news.getThumbnail()).equals("null")) {
+                    articleElement.setEncodedThumbnail(Constants.DEFAULTHUMBNAIL);
+                } else {
+                    articleElement.setEncodedThumbnail(String.valueOf(news.getThumbnail()));
                 }
-            });
-            mListView.setAdapter(adapter);
+                articleElement.setTitle(news.getTitle());
+                articleElement.setPublishedOn(Constants.formatDatime(news.getPublishedOn()));
+                articleElement.setContentSize(Constants.displaySizeForArticleContent(news));
+                articleElement.setLocal(news.getContent().toString() != "");
+                articleElements.add(articleElement);
+            }
+
+            mListView.setAdapter(new ArticleElementsAdapter(context, articleElements));
             return rootView;
         }
 
-        List<Map<String, ?>> getData() {
-            List<Map<String, ?>> list = new ArrayList<Map<String, ?>>();
-            List<NewsData> newsList;
+        public void setupUI() {
 
-            newsList = Select.from(NewsData.class).orderBy("id").list();
-            for (NewsData news: newsList){
-                Map map = new HashMap();
-                map.put("id", String.valueOf(news.getId()));
-                map.put("title", news.getTitle());
-                map.put("description", Html.fromHtml(news.getDescription()));
-                map.put("date", news.getpubDate());
-                list.add(map);
-            }
-            return list;
         }
 
-        private class GetRssFeed extends AsyncTask<String, Void, Void> {
+        private class GetJson extends AsyncTask<String, Void, Void> {
+
+            JSONObject jObject;
+            JSONParser jParser = new JSONParser();
+
+            String data = null;
+            private ProgressDialog Dialog = new ProgressDialog(context.getApplicationContext());
+
+            @Override
+            protected void onPreExecute() {
+                // Loading
+
+              // Dialog.setMessage("Chargement en cours ...");
+               //Dialog.show();
+            }
 
             @Override
             protected Void doInBackground(String... params) {
-                Log.d(TAG, "doInBackground" + " " + params[0]);
                 try {
-                    URL url = new URL(params[0]);
-                    RssFeed feed = RssReader.read(url);
-
-                    ArrayList<RssItem> rssItems = feed.getRssItems();
-                    for (RssItem item : rssItems) {
-                        //Log.i(TAG, item.getLink());
-                        //Log.d(TAG, item.getDescription());
-                        List<NewsData> news = NewsData.find(NewsData.class, "title = ?", item.getTitle());
-                        if (news.isEmpty()){
-                            NewsData newsData = new NewsData(
-                                    item.getPubDate(),
-                                    item.getTitle(),
-                                    item.getDescription(),
-                                    item.getContent(),
-                                    item.getLink(),
-                                    "category");
-                            newsData.save();
-                        } else {
-                            //Log.d(TAG, "Existe déjà dans la base");
-                        }
-                   }
+                    data = JSONParser.getJSONFromUrl(params[0]);
+                } catch (IOException e) {
+                    Log.d(TAG, "IOException " + e.toString());
                 } catch (Exception e) {
-                    Log.v(TAG, String.valueOf(e));
-                  }
+                    Log.e(TAG, "Exception" + e);
+                    return null ;
+                }
+                try {
+                    jObject = new JSONObject(data);
+                } catch (JSONException e) {
+                    Log.d(TAG, "JSONException " + e.toString());
+                }
+
+                List<HashMap<String, Object>> resources = null;
+                resources = jParser.parse(jObject);
+
+                for (HashMap<String, Object> article : resources) {
+                    String publishedOn = article.get(Constants.KEY_PUBLISHED_ON).toString();
+                    String articleId = article.get(Constants.KEY_ARTICLE_ID).toString();
+                    String thumbnail = article.get(Constants.KEY_THUMBNAIL).toString();
+                    String title = article.get(Constants.KEY_TITLE).toString();
+                    String nbComments = article.get(Constants.KEY_NB_COMMENTS).toString();
+                    String contentSize = article.get(Constants.KEY_CONTENT_SIZE).toString();
+                    String content = article.get(Constants.KEY_CONTENT).toString();
+                    List<NewsData> news = NewsData.find(NewsData.class, "articleId = ?", articleId);
+                    if (news.isEmpty()) {
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        Date date = null;
+                        try {
+                            date = dateFormat.parse(publishedOn.replace("T", " "));
+                        } catch (ParseException e) {
+                            Log.d(TAG, "ParseException" + e.toString());
+                        }
+                        NewsData newsData = new NewsData(date,
+                                articleId,
+                                thumbnail,
+                                title,
+                                nbComments,
+                                contentSize,
+                                content);
+                        newsData.save();
+                    } else {
+                        Log.d(TAG, "Existe déjà dans la base");
+                    }
+                }
                 return null;
             }
 
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                adapter.notifyDataSetChanged();
-                mListView.setAdapter(adapter);
-
+                /*if (isOnline()) {
+                    Dialog.dismiss();
+                }else{
+                    //Dialog.
+                    Popups.getStandardProgressDialog(CultureHome.this,
+                            String.valueOf(R.string.required_connexion_title),
+                            String.valueOf(R.string.required_connexion_body), true);
+                }*/
             }
-        }
-
-        protected  void updateNewsStatusData(long sid, String status) {
-            NewsData rpt =  NewsData.findById(NewsData.class, sid);
-            rpt.setTitle(status);
-            rpt.save();
         }
 
         @Override
