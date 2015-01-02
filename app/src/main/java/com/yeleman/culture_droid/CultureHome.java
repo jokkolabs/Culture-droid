@@ -22,6 +22,7 @@ import android.text.Html;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Choreographer;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,6 +35,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import com.orm.query.Select;
 
@@ -163,6 +165,10 @@ public class CultureHome extends ActionBarActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        }
+        if (id == R.id.all_dl) {
+            Constants.getAllArticle();
             return true;
         }
 
@@ -304,7 +310,6 @@ public class CultureHome extends ActionBarActivity
         }
 
         public void setupUI() {
-
         }
 
         private class GetJson extends AsyncTask<String, Void, Void> {
@@ -313,14 +318,32 @@ public class CultureHome extends ActionBarActivity
             JSONParser jParser = new JSONParser();
 
             String data = null;
-            private ProgressDialog Dialog = new ProgressDialog(context.getApplicationContext());
+            private ProgressDialog Dialog = new ProgressDialog(context);
+
+            public boolean isOnline() {
+                ConnectivityManager cm =
+                        (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo netInfo = cm.getActiveNetworkInfo();
+                if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+                    return true;
+                }
+                return false;
+            }
 
             @Override
             protected void onPreExecute() {
                 // Loading
-
-              // Dialog.setMessage("Chargement en cours ...");
-               //Dialog.show();
+                if (!isOnline()) {
+                    Toast toast = Toast.makeText(context.getApplicationContext(), R.string.required_connexion_title,
+                            Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER|Gravity.CENTER, 0, 0);
+                    toast.show();
+                    return;
+                } else {
+                    Dialog.setMessage("Chargement en cours ...");
+                    Dialog.setCancelable(true);
+                    Dialog.show();
+                }
             }
 
             @Override
@@ -377,14 +400,11 @@ public class CultureHome extends ActionBarActivity
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                /*if (isOnline()) {
+                if (isOnline()) {
                     Dialog.dismiss();
                 }else{
                     //Dialog.
-                    Popups.getStandardProgressDialog(CultureHome.this,
-                            String.valueOf(R.string.required_connexion_title),
-                            String.valueOf(R.string.required_connexion_body), true);
-                }*/
+                }
             }
         }
 

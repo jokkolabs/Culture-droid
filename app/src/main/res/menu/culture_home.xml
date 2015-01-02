@@ -1,8 +1,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".CultureHome">
-    <!--<item android:id="@+id/action_example" android:title="@string/action_example"
+     <item android:id="@+id/all_dl" android:title="@string/all_dl"
+         android:icon="@android:drawable/arrow_down_float"
         app:showAsAction="withText|ifRoom" />
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
+    <!--  <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" /> -->
 </menu>

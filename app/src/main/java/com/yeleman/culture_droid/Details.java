@@ -42,6 +42,7 @@ public class Details extends Activity {
     private static final String TAG = Constants.getLogTag("DetailNews");
     private WebView contentView;
     private String sid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,23 +88,24 @@ public class Details extends Activity {
             // Loading
             if (!isOnline()) {
                 finish();
-                Toast toast = Toast.makeText(getApplicationContext(), R.string.required_connexion_title,
-                        Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        R.string.required_connexion_title, Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.CENTER|Gravity.CENTER, 0, 0);
                 toast.show();
                 return;
             } else {
                 Dialog.setMessage("Chargement en cours ...");
+                Dialog.setCancelable(true);
                 Dialog.show();
             }
         }
 
         @Override
         protected Void doInBackground(String... params) {
-            String strurl = params[0];
+            String strUrl = params[0];
             int sid = Integer.parseInt(params[1]);
             try {
-                data = JSONParser.getJSONFromUrl(strurl);
+                data = JSONParser.getJSONFromUrl(strUrl);
             } catch (IOException e) {
                 Log.d(TAG, "IOException " + e.toString());
             } catch (Exception e) {

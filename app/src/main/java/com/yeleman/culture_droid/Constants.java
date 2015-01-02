@@ -51,4 +51,8 @@ public class Constants {
         else
             return "✔";
     }
+
+    public static void getAllArticle() {
+        Log.d(TAG, "TOTO");
+    }
 }
