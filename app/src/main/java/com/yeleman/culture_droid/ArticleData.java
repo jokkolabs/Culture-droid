@@ -1,16 +1,21 @@
 package com.yeleman.culture_droid;
 
+import android.util.Log;
+
 import com.orm.SugarRecord;
 import com.orm.dsl.Ignore;
+import com.orm.query.Condition;
+import com.orm.query.Select;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.StringTokenizer;
+import java.util.List;
 
-public class NewsData extends SugarRecord {
+public class ArticleData extends SugarRecord {
 
     @Ignore
-    private static final String TAG = Constants.getLogTag("NewsData");
-;
+    private static final String TAG = Constants.getLogTag("ArticleData");
+
     private Date published_on;
     private String article_id;
     private String thumbnail;
@@ -19,10 +24,10 @@ public class NewsData extends SugarRecord {
     private String content_size;
     private String content;
 
-    public NewsData() {
+    public ArticleData() {
     }
 
-    public NewsData(Date published_on,
+    public ArticleData(Date published_on,
                     String article_id,
                     String thumbnail,
                     String title,
@@ -49,6 +54,7 @@ public class NewsData extends SugarRecord {
     public void setNbComments(String nb_comments) {
         this.nb_comments = nb_comments;
     }
+
     public String getTitle() {
         return this.title;
     }
@@ -91,5 +97,30 @@ public class NewsData extends SugarRecord {
 
     public String getContent() {
         return this.content;
+    }
+
+    public void saveWithId() {
+        this.setId(this.save());
+    }
+
+    public void articleTagSave(List<String> tagNames) {
+
+        for (String tagName: tagNames) {
+            TagData tag = TagData.getOrCreate(tagName);
+            TagArticleData.getOrCreate(tag.getId(), this.getId());
+        }
+    }
+
+    public static List<ArticleData> allByTagName(String tagName) {
+        List<ArticleData> articleDataList = new ArrayList<ArticleData>();
+        Long tagId = TagData.getByName(tagName).getId();
+        Log.d(TAG, "allByTagName: " + tagName + " / " + tagId);
+        for(TagArticleData tagArticle : Select.from(TagArticleData.class).where(Condition.prop("TAGID").eq(tagId)).list()){
+            ArticleData article = Select.from(ArticleData.class).where(Condition.prop("id").eq(tagArticle.getArticleID())).first();
+            if (article != null) {
+                articleDataList.add(article);
+            }
+         }
+        return articleDataList;
     }
 }

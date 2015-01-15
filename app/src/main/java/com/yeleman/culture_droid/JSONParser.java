@@ -19,6 +19,8 @@ import org.json.JSONObject;
 /** A class to parse json data */
 public class JSONParser {
 
+    private static final String TAG = Constants.getLogTag("JSONParser");
+
     // Receives a JSONObject and returns a list
     public List<HashMap<String,Object>> parse(JSONObject jObject){
 
@@ -65,6 +67,7 @@ public class JSONParser {
         String nb_comments = "";
         String thumbnail = "";
         String content = "";
+        JSONArray tags;
 
         try {
             published_on = jResource.getString(Constants.KEY_PUBLISHED_ON);
@@ -74,6 +77,7 @@ public class JSONParser {
             nb_comments = jResource.getString(Constants.KEY_NB_COMMENTS);
             thumbnail = jResource.getString(Constants.KEY_THUMBNAIL);
             content = "";
+            tags = jResource.getJSONArray(Constants.KEY_TAGS);
             resource.put(Constants.KEY_PUBLISHED_ON, published_on);
             resource.put(Constants.KEY_TITLE, title);
             resource.put(Constants.KEY_CONTENT_SIZE, content_size);
@@ -81,6 +85,7 @@ public class JSONParser {
             resource.put(Constants.KEY_NB_COMMENTS, nb_comments);
             resource.put(Constants.KEY_THUMBNAIL, thumbnail);
             resource.put(Constants.KEY_CONTENT, content);
+            resource.put(Constants.KEY_TAGS, tags);
 
         } catch (JSONException e) {
             e.printStackTrace();

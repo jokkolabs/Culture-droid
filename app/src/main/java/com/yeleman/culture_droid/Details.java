@@ -50,7 +50,7 @@ public class Details extends Activity {
         setContentView(R.layout.details);
 
         sid = getIntent().getExtras().getString("articleId");
-        NewsData news =  NewsData.findById(NewsData.class, Long.valueOf(sid));
+        ArticleData news =  ArticleData.findById(ArticleData.class, Long.valueOf(sid));
         String urlDetail = Constants.getUrl(String.format("article_%s.html", news.getArticleId()));
         if (news.getContent().isEmpty()) {
             new GetHtml().execute(urlDetail, sid);
@@ -63,7 +63,7 @@ public class Details extends Activity {
     public void setupUI() {
         Log.d(TAG, "setupUI");
         contentView = (WebView) findViewById(R.id.detailWeb);
-        NewsData news =  NewsData.findById(NewsData.class, Long.valueOf(sid));
+        ArticleData news =  ArticleData.findById(ArticleData.class, Long.valueOf(sid));
         String strHtml = news.getContent();
         contentView.loadDataWithBaseURL(Constants.nameDomaine, strHtml, "text/html", "UTF-8", "");
     }
@@ -71,7 +71,7 @@ public class Details extends Activity {
     private class GetHtml extends AsyncTask<String, Void, Void> {
 
         String data = null;
-        private ProgressDialog Dialog = new ProgressDialog(Details.this);
+        private ProgressDialog progressDialog = new ProgressDialog(Details.this);
 
         public boolean isOnline() {
             ConnectivityManager cm =
@@ -94,9 +94,9 @@ public class Details extends Activity {
                 toast.show();
                 return;
             } else {
-                Dialog.setMessage("Chargement en cours ...");
-                Dialog.setCancelable(true);
-                Dialog.show();
+                progressDialog.setMessage("Chargement en cours ...");
+                progressDialog.setCancelable(true);
+                progressDialog.show();
             }
         }
 
@@ -112,7 +112,7 @@ public class Details extends Activity {
                 Log.d(TAG, "Exception " + e.toString());
                 return null;
             }
-            NewsData news =  NewsData.findById(NewsData.class, Long.valueOf(sid));
+            ArticleData news =  ArticleData.findById(ArticleData.class, Long.valueOf(sid));
             news.setContent(data);
             news.save();
             return null;
@@ -123,7 +123,7 @@ public class Details extends Activity {
             super.onPostExecute(aVoid);
             if (isOnline()) {
                 setupUI();
-                Dialog.dismiss();
+                progressDialog.dismiss();
             }else{
                 //Dialog.
             }

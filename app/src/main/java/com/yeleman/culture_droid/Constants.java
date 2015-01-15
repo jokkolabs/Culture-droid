@@ -2,9 +2,15 @@ package com.yeleman.culture_droid;
 
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by fad on 19/12/14.
@@ -14,6 +20,8 @@ public class Constants {
 
     private static final String TAG = Constants.getLogTag("Constants");
 
+    protected static String nameDomaine = "192.168.5.55:8000";
+
     public static final String KEY_THUMBNAIL = "thumbnail";
     public static final String KEY_TITLE = "title";
     public static final String KEY_PUBLISHED_ON = "published_on";
@@ -21,9 +29,21 @@ public class Constants {
     public static final String KEY_ARTICLE_ID = "article_id";
     public static final String KEY_NB_COMMENTS = "nb_comments";
     public static final String KEY_CONTENT = "content";
-    public static final String DEFAULTHUMBNAIL = "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABdklEQVR4nO2bwRKDIBBD107//5fppesgogKuhoXk0o6dkeSZtR5kCSHIS2pZaDF3kej74LktyKbnMAdiDeDpOsXnN4FhBeC1OcqseQvEx9AISrfWv9MAdPBYzW1oAdBT8FTVIGpHoOfwsYp91gDwEl5V5LcUgLfwqkvfJQC8hled+r8C4D286jDHGYBRwquyeSwehFzrCMBoV1+1y8UGZI6NevVVm3wpgNHDq9acHIHo+yxXXxVE2AACUACz1V8V2AC0AbQIQOadfxFhAwiAANAG0CIAtAG0CABtAC0CQBtAiwDkhTexehYbgDaAFgH8P2e9DyxsANoAWjGA2cZgEWEDdgBmacGaM9eA0SFs8nEEDo6P2oJdLjbg5LfRWpDNc9WAUSAc5igZAe8QTv2X3gO8Qrj0XXMT9AahyG/tv4AXCMU+W/YM6cl7fK/glU1T6WI9gGhupsWDEHosbq1vtXMU0Yauts6qYlNPwOh+83Ss1GyX2+d/qB8skeca7swAAAAASUVORK5CYII=";
+    public static final String DEFAULTHUMBNAIL = "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAA" +
+            "AAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAmFJREFUeNrs1DEBAAAIwzDmX/QwgAMSCT" +
+            "2atgP8FAMAAwAMADAAwAAAAwAMADAAwAAAAwAMADAAwAAAAwAMADAAwAAAAwAMADAAwAAAAwAMADAAwAAAAw" +
+            "AMADAAwAAAAwAMADAAwAAAAwAMADAAwADAAAwADAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAA" +
+            "MADAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMAAzAAMADAAAADAAwAMADAAA" +
+            "ADAAwAMADAAAADAAwAMADAAAADAAwAMADAAAADAAwAMADAAAADAAwAMADAAAADAAwAMADAAAADAAwAMADAAA" +
+            "ADAAwADEAFMADAAAADAAwAMADAAAADAAwAMADAAAADAAwAMADAAAADAAwAMADAAAADAAwAMADAAAADAAwAMA" +
+            "DAAAADAAwAMADAAAADAAwAMADAAAADAAwADAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADA" +
+            "AwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADAAMADAAwAAAAwAMADAAwAAAAw" +
+            "AMADAAwAAAAwAMADAAwAAAAwAMADAAwAAAAwAMADAAwAAAAwAMADAAwAAAAwAMADAAwAAAAwAMADAAwAAAAw" +
+            "AMAAwAMADAAAADAAwAMADAAAADAAwAMADAAAADAAwAMADAAAADAAwAMADAAAADAAwAMADAAAADAAwAMADAAA" +
+            "ADAAwAMADAAAADAAwAuKwAAwC/bP4fP9glIQAAAABJRU5ErkJggg==";
 
-    protected static String nameDomaine = "192.168.5.55:8000";
+    public static final String KEY_TAGS = "tags";
+    public static final String TAG_ALL = "Tous les articles";
 
     public static final String getLogTag(String activity) {
         return String.format("CultureLog-%s", activity);
@@ -45,7 +65,7 @@ public class Constants {
         return strDate;
     }
 
-    public static String displaySizeForArticleContent(NewsData newsData) {
+    public static String displaySizeForArticleContent(ArticleData newsData) {
         if (newsData.getContent().isEmpty())
             return  convertSizeOctToKo(newsData.getContentSize());
         else
@@ -54,5 +74,19 @@ public class Constants {
 
     public static void getAllArticle() {
         Log.d(TAG, "TOTO");
+    }
+
+    public static List<String> listStringFromJsonArray(JSONArray array){
+
+        int len = array.length();
+        List list = new ArrayList();
+        for (int i = 0; i<len; i++) {
+            try {
+                list.add(array.getString(i));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return list;
     }
 }
