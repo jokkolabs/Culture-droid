@@ -50,9 +50,9 @@ public class Details extends Activity {
         setContentView(R.layout.details);
 
         sid = getIntent().getExtras().getString("articleId");
-        ArticleData news =  ArticleData.findById(ArticleData.class, Long.valueOf(sid));
-        String urlDetail = Constants.getUrl(String.format("article_%s.html", news.getArticleId()));
-        if (news.getContent().isEmpty()) {
+        ArticleData article =  ArticleData.findById(ArticleData.class, Long.valueOf(sid));
+        String urlDetail = Constants.getUrl(String.format("article_%s.html", article.getArticleId()));
+        if (article.getContent().isEmpty()) {
             new GetHtml().execute(urlDetail, sid);
         } else {
             Log.d(TAG, "Existe déjà");
@@ -70,7 +70,7 @@ public class Details extends Activity {
 
     private class GetHtml extends AsyncTask<String, Void, Void> {
 
-        String data = null;
+        String articleContent = null;
         private ProgressDialog progressDialog = new ProgressDialog(Details.this);
 
         public boolean isOnline() {
@@ -105,16 +105,16 @@ public class Details extends Activity {
             String strUrl = params[0];
             int sid = Integer.parseInt(params[1]);
             try {
-                data = JSONParser.getJSONFromUrl(strUrl);
+                articleContent = JSONParser.getJSONFromUrl(strUrl);
             } catch (IOException e) {
                 Log.d(TAG, "IOException " + e.toString());
             } catch (Exception e) {
                 Log.d(TAG, "Exception " + e.toString());
                 return null;
             }
-            ArticleData news =  ArticleData.findById(ArticleData.class, Long.valueOf(sid));
-            news.setContent(data);
-            news.save();
+            ArticleData article =  ArticleData.findById(ArticleData.class, Long.valueOf(sid));
+            article.setContent(articleContent);
+            article.save();
             return null;
         }
 
@@ -122,11 +122,15 @@ public class Details extends Activity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if (isOnline()) {
-                setupUI();
-                progressDialog.dismiss();
-            }else{
-                //Dialog.
+                try {
+                    if ((progressDialog != null) && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                } catch (final Exception e) {
+                    progressDialog = null;
+                }
             }
+            setupUI();
         }
     }
 }

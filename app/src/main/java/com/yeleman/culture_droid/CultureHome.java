@@ -84,12 +84,12 @@ public class CultureHome extends ActionBarActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         final FragmentTransaction ft = fragmentManager.beginTransaction();
         if (number == 1) {
-            ft.replace(R.id.container, About.newInstance(number + 1)).commit();
+            ft.replace(R.id.container, AboutFragment.newInstance(number + 1)).commit();
             mTitle = getString(R.string.about);
         } else {
             number -= 1;
             String tagName = String.valueOf(TagData.getListTags().get(number));
-            ft.replace(R.id.container, News.newInstance(number, tagName)).commit();
+            ft.replace(R.id.container, ArticleFragment.newInstance(number, tagName)).commit();
             mTitle = tagName;
         }
     }
@@ -174,21 +174,21 @@ public class CultureHome extends ActionBarActivity
     }
 
     /**
-     * About
+     * AboutFrFragment
      */
-    public static class About extends Fragment {
+    public static class AboutFragment extends Fragment {
 
         private static final String ARG_SECTION_NUMBER_1 = "about";
 
-        public static About newInstance(int sectionNumber) {
-            About fragment = new About();
+        public static AboutFragment newInstance(int sectionNumber) {
+            AboutFragment fragment = new AboutFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER_1, sectionNumber);
             fragment.setArguments(args);
             return fragment;
         }
 
-        public About() {
+        public AboutFragment() {
         }
 
         @Override
@@ -201,22 +201,25 @@ public class CultureHome extends ActionBarActivity
 
         @Override
         public void onAttach(Activity activity) {
-            Log.d(TAG, "onAttach About");
+            Log.d(TAG, "onAttach AboutFragment");
             super.onAttach(activity);
         }
     }
 
     /**
-     * News
+     * ArticleFragment
      */
-    public static class News extends Fragment {
+    public static class ArticleFragment extends Fragment {
 
-        private static final String ARG_SECTION_NUMBER_2 = "News";
+        private static final String ARG_SECTION_NUMBER_2 = "ArticleFragment";
         private ListView mListView;
         private Context context;
 
-        public static News newInstance(int sectionNumber, String tagName) {
-            News fragment = new News();
+        private ArticleElementsAdapter mAdapter;
+        //private ViewGroup containers;
+
+        public static ArticleFragment newInstance(int sectionNumber, String tagName) {
+            ArticleFragment fragment = new ArticleFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER_2, sectionNumber);
             args.putString("tag", tagName);
@@ -224,7 +227,7 @@ public class CultureHome extends ActionBarActivity
             return fragment;
         }
 
-        public News() {
+        public ArticleFragment() {
         }
 
         @Override
@@ -237,16 +240,18 @@ public class CultureHome extends ActionBarActivity
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             final View rootView = inflater.inflate(R.layout.news, container, false);
-
             Log.d(TAG , "onCreateView");
-            String tagName = getArguments().getString("tag");
 
             mListView = (ListView) rootView.findViewById(R.id.list);
-
             String urlJson = Constants.getUrl("articles.json");
             context = container.getContext();
             new GetJson().execute(urlJson);
+            setupUI();
+            return rootView;
+        }
 
+        public void setupUI() {
+            String tagName = getArguments().getString("tag");
             ArticleElement articleElement;
             ArrayList<ArticleElement> articleElements = new ArrayList<ArticleElement>();
             List<ArticleData> articleDataList;
@@ -274,12 +279,8 @@ public class CultureHome extends ActionBarActivity
             }catch (Exception e){
                 Log.e(TAG, "newsDataList-" + e);
             }
-
-            mListView.setAdapter(new ArticleElementsAdapter(context, articleElements));
-            return rootView;
-        }
-
-        public void setupUI() {
+            mAdapter = new ArticleElementsAdapter(context, articleElements);
+            mListView.setAdapter(mAdapter);
         }
 
         private class GetJson extends AsyncTask<String, Void, Void> {
@@ -310,9 +311,10 @@ public class CultureHome extends ActionBarActivity
                     toast.show();
                     return;
                 } else {
+                    progressDialog.dismiss();
                     progressDialog.setMessage("Chargement en cours ...");
                     progressDialog.setCancelable(false);
-                    //progressDialog.show();
+                    progressDialog.show();
                 }
             }
 
@@ -374,15 +376,21 @@ public class CultureHome extends ActionBarActivity
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
                 if (isOnline()) {
-                    progressDialog.dismiss();
-                }else{
+                    try {
+                        if ((progressDialog != null) && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
+                    } catch (final Exception e) {
+                        progressDialog = null;
+                    }
                 }
+                setupUI();
             }
         }
 
         @Override
         public void onAttach(Activity activity) {
-            Log.d(TAG, "onAttach News");
+            Log.d(TAG, "onAttach ArticleFragment");
             super.onAttach(activity);
         }
     }

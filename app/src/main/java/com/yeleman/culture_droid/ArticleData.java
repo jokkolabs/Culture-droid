@@ -123,4 +123,6 @@ public class ArticleData extends SugarRecord {
          }
         return articleDataList;
     }
+
+
 }

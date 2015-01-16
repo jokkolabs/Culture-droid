@@ -97,6 +97,12 @@ public class NavigationDrawerFragment extends Fragment {
                              Bundle savedInstanceState) {
         mDrawerListView = (ListView) inflater.inflate(
                 R.layout.fragment_navigation_drawer, container, false);
+        setupUI();
+        return mDrawerListView;
+    }
+
+    public void setupUI(){
+
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -111,7 +117,6 @@ public class NavigationDrawerFragment extends Fragment {
                 tagsListString
         ));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
-        return mDrawerListView;
     }
 
     public boolean isDrawerOpen() {
@@ -158,6 +163,7 @@ public class NavigationDrawerFragment extends Fragment {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+                setupUI();
                 if (!isAdded()) {
                     return;
                 }
