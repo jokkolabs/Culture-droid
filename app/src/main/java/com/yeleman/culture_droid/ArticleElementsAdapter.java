@@ -69,7 +69,7 @@ public class ArticleElementsAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 //contentSize.setText("✔");
-                Intent intent = new Intent(context, Details.class);
+                Intent intent = new Intent(context, ArticleContent.class);
                 intent.putExtra("articleId", String.valueOf(articleId));
                 context.startActivity(intent);
             }

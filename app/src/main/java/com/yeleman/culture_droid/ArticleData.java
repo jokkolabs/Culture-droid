@@ -124,5 +124,7 @@ public class ArticleData extends SugarRecord {
         return articleDataList;
     }
 
-
+    public static ArticleData  getById(String id) {
+        return ArticleData.findById(ArticleData.class, Long.valueOf(id));
+    }
 }

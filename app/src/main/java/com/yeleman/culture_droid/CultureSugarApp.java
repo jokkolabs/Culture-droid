@@ -23,7 +23,6 @@ public class CultureSugarApp extends SugarApp {
 
         Log.d("Sugar", "DB inited");
         Log.i(TAG, "DB inited");
-        //ArticleData x = ArticleData.findById(ArticleData.class, 1);
 
     }
     @Override

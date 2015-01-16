@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -126,7 +127,11 @@ public class CultureHome extends ActionBarActivity
             return true;
         }
         if (id == R.id.all_dl) {
-            Constants.getAllArticle();
+
+            Intent intent = new Intent(
+                    getApplicationContext(),
+                    SaveAllArticleContent.class);
+            startActivity(intent);
             return true;
         }
 
@@ -289,7 +294,7 @@ public class CultureHome extends ActionBarActivity
             JSONParser jParser = new JSONParser();
 
             String data = null;
-            private ProgressDialog progressDialog = new ProgressDialog(context);
+            private ProgressDialog progressDialog;
 
             public boolean isOnline() {
                 ConnectivityManager cm =
@@ -311,9 +316,8 @@ public class CultureHome extends ActionBarActivity
                     toast.show();
                     return;
                 } else {
-                    progressDialog.dismiss();
-                    progressDialog.setMessage("Chargement en cours ...");
-                    progressDialog.setCancelable(false);
+                    progressDialog = Popups.getStandardProgressDialog(getActivity(), "",
+                            getString(R.string.loading), false);
                     progressDialog.show();
                 }
             }

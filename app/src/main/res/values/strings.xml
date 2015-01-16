@@ -20,4 +20,8 @@
     <string name="required_connexion_cancel">Annuler</string>
     <string name="required_connexion_retry">Réessayer</string>
     <string name="dl_status">![CDATA[✔]]</string>
+    <string name="loading">Chargement en cours ...</string>
+    <string name="getAllArticleContentmessage">Est vous sûre de vouloir télécharger de tout les contenus.</string>
+    <string name="cancel">Annuler</string>
+    <string name="oK">OK</string>
 </resources>

@@ -73,6 +73,7 @@ public class Constants {
     }
 
     public static void getAllArticle() {
+
         Log.d(TAG, "TOTO");
     }
 

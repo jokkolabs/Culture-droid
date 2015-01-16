@@ -37,9 +37,9 @@ import java.util.List;
  * Created by fad on 23/12/14.
  */
 
-public class Details extends Activity {
+public class ArticleContent extends Activity {
 
-    private static final String TAG = Constants.getLogTag("DetailNews");
+    private static final String TAG = Constants.getLogTag("ArticleContent");
     private WebView contentView;
     private String sid;
 
@@ -50,28 +50,20 @@ public class Details extends Activity {
         setContentView(R.layout.details);
 
         sid = getIntent().getExtras().getString("articleId");
-        ArticleData article =  ArticleData.findById(ArticleData.class, Long.valueOf(sid));
-        String urlDetail = Constants.getUrl(String.format("article_%s.html", article.getArticleId()));
-        if (article.getContent().isEmpty()) {
-            new GetHtml().execute(urlDetail, sid);
-        } else {
-            Log.d(TAG, "Existe déjà");
-            setupUI();
-        }
+        new GetHtml().execute(sid);
     }
 
     public void setupUI() {
         Log.d(TAG, "setupUI");
         contentView = (WebView) findViewById(R.id.detailWeb);
-        ArticleData news =  ArticleData.findById(ArticleData.class, Long.valueOf(sid));
-        String strHtml = news.getContent();
-        contentView.loadDataWithBaseURL(Constants.nameDomaine, strHtml, "text/html", "UTF-8", "");
+        ArticleData article =  ArticleData.getById(sid);
+        contentView.loadDataWithBaseURL(Constants.nameDomaine, article.getContent(), "text/html", "UTF-8", "");
     }
 
     private class GetHtml extends AsyncTask<String, Void, Void> {
 
         String articleContent = null;
-        private ProgressDialog progressDialog = new ProgressDialog(Details.this);
+        private ProgressDialog progressDialog;
 
         public boolean isOnline() {
             ConnectivityManager cm =
@@ -94,16 +86,16 @@ public class Details extends Activity {
                 toast.show();
                 return;
             } else {
-                progressDialog.setMessage("Chargement en cours ...");
-                progressDialog.setCancelable(true);
+                progressDialog = Popups.getStandardProgressDialog(ArticleContent.this, "",
+                        getString(R.string.loading), false);
                 progressDialog.show();
             }
         }
 
         @Override
         protected Void doInBackground(String... params) {
-            String strUrl = params[0];
-            int sid = Integer.parseInt(params[1]);
+            String sid = params[0];
+            String strUrl = Constants.getUrl(String.format("article_%s.html", sid));
             try {
                 articleContent = JSONParser.getJSONFromUrl(strUrl);
             } catch (IOException e) {
@@ -112,9 +104,14 @@ public class Details extends Activity {
                 Log.d(TAG, "Exception " + e.toString());
                 return null;
             }
-            ArticleData article =  ArticleData.findById(ArticleData.class, Long.valueOf(sid));
-            article.setContent(articleContent);
-            article.save();
+            ArticleData article =  ArticleData.getById(sid);
+            if (article.getContent().isEmpty()) {
+                article.setContent(articleContent);
+                article.save();
+            } else {
+                Log.d(TAG, "Existe déjà");
+                setupUI();
+            }
             return null;
         }
 
