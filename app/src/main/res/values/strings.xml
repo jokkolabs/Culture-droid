@@ -12,7 +12,7 @@
     <string name="village">Vie au village</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="all_dl">Téléchargement de tout les articles</string>
+    <string name="all_dl">Télécharger tous les articles</string>
     <string name="action_settings">Settings</string>
     <string name="about">À propos</string>
     <string name="required_connexion_title">Connexion requise</string>

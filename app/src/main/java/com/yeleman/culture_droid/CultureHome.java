@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
+import android.webkit.WebView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -183,6 +184,7 @@ public class CultureHome extends ActionBarActivity
     public static class AboutFragment extends Fragment {
 
         private static final String ARG_SECTION_NUMBER_1 = "about";
+        private WebView contentView;
 
         public static AboutFragment newInstance(int sectionNumber) {
             AboutFragment fragment = new AboutFragment();
@@ -198,8 +200,12 @@ public class CultureHome extends ActionBarActivity
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.about, container,
+            View rootView = inflater.inflate(R.layout.web_view, container,
                     false);
+            contentView = (WebView) rootView.findViewById(R.id.webView);
+            String htmlString = "<Html><h1>DJ DASHI</h1></html>";
+            //contentView.loadDataWithBaseURL("file:///android_asset/", htmlString, "text/html", "utf-8", null);
+            contentView.loadUrl("file:///android_asset/about.html");
             return rootView;
         }
 
@@ -243,7 +249,7 @@ public class CultureHome extends ActionBarActivity
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            final View rootView = inflater.inflate(R.layout.news, container, false);
+            final View rootView = inflater.inflate(R.layout.article, container, false);
             Log.d(TAG , "onCreateView");
 
             mListView = (ListView) rootView.findViewById(R.id.list);

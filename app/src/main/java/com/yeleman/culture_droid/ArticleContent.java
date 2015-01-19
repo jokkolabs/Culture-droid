@@ -48,7 +48,7 @@ public class ArticleContent extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
-        setContentView(R.layout.details);
+        setContentView(R.layout.web_view);
 
         sid = getIntent().getExtras().getString("articleId");
         article =  ArticleData.getById(sid);
@@ -61,8 +61,10 @@ public class ArticleContent extends Activity {
 
     public void setupUI() {
         Log.d(TAG, "setupUI");
-        contentView = (WebView) findViewById(R.id.detailWeb);
-        contentView.loadDataWithBaseURL(Constants.nameDomaine, article.getContent(), "text/html", "UTF-8", "");
+        contentView = (WebView) findViewById(R.id.webView);
+       // contentView.loadDataWithBaseURL(Constants.nameDomaine, article.getContent(), "text/html", "UTF-8", "");
+        contentView.loadDataWithBaseURL("file:///android_asset/", article.getContent(), "text/html", "utf-8", null);
+
     }
 
     private class GetHtml extends AsyncTask<String, Void, Void> {
