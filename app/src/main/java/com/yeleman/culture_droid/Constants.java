@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -59,12 +60,6 @@ public class Constants {
         return String.valueOf(sizeKo) + "k";
     }
 
-    public static String dateToStrDate(Date date) {
-        DateFormat df = new SimpleDateFormat("dd MMMM yyyy");
-        String strDate = df.format(date.getTime());
-        return strDate;
-    }
-
     public static String displaySizeForArticleContent(ArticleData newsData) {
         if (newsData.getContent().isEmpty())
             return  convertSizeOctToKo(newsData.getContentSize());
@@ -86,6 +81,12 @@ public class Constants {
         return list;
     }
 
+    public static String formatDateToStrDate(Date date) {
+        DateFormat df = new SimpleDateFormat("dd MMMM yyyy");
+        String strDate = df.format(date.getTime());
+        return strDate;
+    }
+
     public static Date strDateToDate(String strDate) {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -97,4 +98,38 @@ public class Constants {
         }
         return date;
     }
+/*
+    private static final int SECOND_MILLIS = 1000;
+    private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
+    private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
+
+    public static String getTimeAgo(long time) {
+        if (time < 1000000000000L) {
+            // if timestamp given in seconds, convert to millis
+            time *= 1000;
+        }
+        long now =  Calendar.getInstance().getTime().getTime();
+        if (time > now || time <= 0) {
+            return null;
+        }
+        final long diff = now - time;
+        Log.d(TAG, diff + " now: "+now);
+        if (diff < MINUTE_MILLIS) {
+            return "Aujourd'hui";
+        } else if (diff < 2 * MINUTE_MILLIS) {
+            return "il ya une minute";
+        } else if (diff < 50 * MINUTE_MILLIS) {
+            return diff / MINUTE_MILLIS + " minutes";
+        } else if (diff < 90 * MINUTE_MILLIS) {
+            return "il ya une heure";
+        } else if (diff < 24 * HOUR_MILLIS) {
+            return diff / HOUR_MILLIS + " Heures";
+        } else if (diff < 48 * HOUR_MILLIS) {
+            return "Hier";
+        } else {
+            DateFormat df = new SimpleDateFormat("dd MMMM yyyy");
+            String strDate = df.format(time);
+            return strDate;
+        }
+    }*/
 }

@@ -53,7 +53,7 @@ public class ArticleContent extends Activity {
         sid = getIntent().getExtras().getString("articleId");
         article =  ArticleData.getById(sid);
         if (article.getContent().isEmpty()) {
-            new GetHtml().execute();
+            new GetHtmlAndUpdateArticleContent().execute();
         } else {
             setupUI();
         }
@@ -66,7 +66,7 @@ public class ArticleContent extends Activity {
 
     }
 
-    private class GetHtml extends AsyncTask<String, Void, Void> {
+    private class GetHtmlAndUpdateArticleContent extends AsyncTask<String, Void, Void> {
 
         String articleContent = null;
         private ProgressDialog progressDialog;

@@ -82,7 +82,6 @@ public class GetJsonAndUpdateArticleData extends AsyncTask<String, Void, Void> {
                 String content = article.get(Constants.KEY_CONTENT).toString();
                 JSONArray tags = (JSONArray) article.get(Constants.KEY_TAGS);
 
-                Log.d(TAG, "ArticleID:" + articleId);
                 List<ArticleData> news = ArticleData.find(ArticleData.class, "articleId = ?", articleId);
                 if (news.isEmpty()) {
                     Date date = Constants.strDateToDate(publishedOn);

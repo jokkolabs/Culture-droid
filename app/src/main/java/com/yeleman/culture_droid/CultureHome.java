@@ -267,7 +267,8 @@ public class CultureHome extends ActionBarActivity
                         articleElement.setEncodedThumbnail(String.valueOf(news.getThumbnail()));
                     }
                     articleElement.setTitle(news.getTitle());
-                    articleElement.setPublishedOn(Constants.dateToStrDate(news.getPublishedOn()));
+                    articleElement.setPublishedOn(Constants.formatDateToStrDate(news.getPublishedOn()));
+                    //articleElement.setPublishedOn(Constants.getTimeAgo(news.getPublishedOn().getTime()));
                     articleElement.setContentSize(Constants.displaySizeForArticleContent(news));
                     articleElement.setLocal(news.getContent().toString() != "");
                     articleElements.add(articleElement);
