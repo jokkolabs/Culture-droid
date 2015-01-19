@@ -104,14 +104,14 @@ public class SaveAllArticleContent extends Activity {
                 String strUrl = Constants.getUrl(String.format("article_%s.html", article.getArticleId()));
                 try {
                     articleContent = JSONParser.getJSONFromUrl(strUrl);
+                    article.setContent(articleContent);
+                    article.save();
                 } catch (IOException e) {
                     Log.d(TAG, "IOException " + e.toString());
                 } catch (Exception e) {
                     Log.d(TAG, "Exception " + e.toString());
                     return null;
                 }
-                article.setContent(articleContent);
-                article.save();
                 progressDialog.incrementProgressBy(1);
             }
             return null;

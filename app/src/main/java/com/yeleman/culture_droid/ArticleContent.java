@@ -42,6 +42,7 @@ public class ArticleContent extends Activity {
     private static final String TAG = Constants.getLogTag("ArticleContent");
     private WebView contentView;
     private String sid;
+    ArticleData article;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,13 +51,17 @@ public class ArticleContent extends Activity {
         setContentView(R.layout.details);
 
         sid = getIntent().getExtras().getString("articleId");
-        new GetHtml().execute(sid);
+        article =  ArticleData.getById(sid);
+        if (article.getContent().isEmpty()) {
+            new GetHtml().execute();
+        } else {
+            setupUI();
+        }
     }
 
     public void setupUI() {
         Log.d(TAG, "setupUI");
         contentView = (WebView) findViewById(R.id.detailWeb);
-        ArticleData article =  ArticleData.getById(sid);
         contentView.loadDataWithBaseURL(Constants.nameDomaine, article.getContent(), "text/html", "UTF-8", "");
     }
 
@@ -94,23 +99,17 @@ public class ArticleContent extends Activity {
 
         @Override
         protected Void doInBackground(String... params) {
-            String sid = params[0];
+            //String sid = params[0];
             String strUrl = Constants.getUrl(String.format("article_%s.html", sid));
             try {
                 articleContent = JSONParser.getJSONFromUrl(strUrl);
+                article.setContent(articleContent);
+                article.save();
             } catch (IOException e) {
                 Log.d(TAG, "IOException " + e.toString());
             } catch (Exception e) {
                 Log.d(TAG, "Exception " + e.toString());
                 return null;
-            }
-            ArticleData article =  ArticleData.getById(sid);
-            if (article.getContent().isEmpty()) {
-                article.setContent(articleContent);
-                article.save();
-            } else {
-                Log.d(TAG, "Existe déjà");
-                setupUI();
             }
             return null;
         }

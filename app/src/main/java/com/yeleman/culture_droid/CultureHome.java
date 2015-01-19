@@ -127,7 +127,6 @@ public class CultureHome extends ActionBarActivity
             return true;
         }
         if (id == R.id.all_dl) {
-
             Intent intent = new Intent(
                     getApplicationContext(),
                     SaveAllArticleContent.class);
@@ -248,8 +247,8 @@ public class CultureHome extends ActionBarActivity
             Log.d(TAG , "onCreateView");
 
             mListView = (ListView) rootView.findViewById(R.id.list);
-            String urlJson = Constants.getUrl("articles.json");
             context = container.getContext();
+            String urlJson = Constants.getUrl("articles.json");
             new GetJson().execute(urlJson);
             setupUI();
             return rootView;
@@ -326,11 +325,9 @@ public class CultureHome extends ActionBarActivity
             protected Void doInBackground(String... params) {
                 try {
                     data = JSONParser.getJSONFromUrl(params[0]);
-                } catch (IOException e) {
-                    Log.d(TAG, "doInBackground IOException " + e.toString());
                 } catch (Exception e) {
                     Log.e(TAG, "doInBackground Exception" + e + "\nLe lien (url) vers la liste des articles est mort.");
-                    return null ;
+                    return null;
                 }
                 try {
                     jObject = new JSONObject(data);
@@ -370,7 +367,6 @@ public class CultureHome extends ActionBarActivity
                         Log.d(TAG, "Creating article: "+ articleData.getArticleId() + " with ID: "+ articleData.getId());
                         articleData.articleTagSave(Constants.listStringFromJsonArray(tags));
                     } else {
-                        //Log.d(TAG, "Existe déjà dans la base");
                     }
                 }
                 return null;

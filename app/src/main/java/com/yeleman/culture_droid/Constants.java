@@ -59,7 +59,6 @@ public class Constants {
     }
 
     public static String formatDatime(Date date) {
-
         DateFormat df = new SimpleDateFormat("dd MMMM yyyy");
         String strDate = df.format(date.getTime());
         return strDate;
@@ -70,11 +69,6 @@ public class Constants {
             return  convertSizeOctToKo(newsData.getContentSize());
         else
             return "✔";
-    }
-
-    public static void getAllArticle() {
-
-        Log.d(TAG, "TOTO");
     }
 
     public static List<String> listStringFromJsonArray(JSONArray array){
