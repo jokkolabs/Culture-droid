@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,7 +59,7 @@ public class Constants {
         return String.valueOf(sizeKo) + "k";
     }
 
-    public static String formatDatime(Date date) {
+    public static String dateToStrDate(Date date) {
         DateFormat df = new SimpleDateFormat("dd MMMM yyyy");
         String strDate = df.format(date.getTime());
         return strDate;
@@ -83,5 +84,17 @@ public class Constants {
             }
         }
         return list;
+    }
+
+    public static Date strDateToDate(String strDate) {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date();
+        try {
+            date = dateFormat.parse(strDate.replace("T", " "));
+        } catch (ParseException e) {
+            Log.d(TAG, "ParseException" + e.toString());
+        }
+        return date;
     }
 }

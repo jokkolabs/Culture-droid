@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Culture Mali</string>
     <string name="all_article">Tous les articles</string>
     <string name="culture">Culture</string>
@@ -16,7 +15,7 @@
     <string name="action_settings">Settings</string>
     <string name="about">À propos</string>
     <string name="required_connexion_title">Connexion requise</string>
-    <string name="required_connexion_body">Cette action nécessite une connexion à Internet. Activez les données mobiles ou le WiFi puis réessayez.</string>
+    <string name="required_connexion_body">Vous êtes en mode hors connexion.</string>
     <string name="required_connexion_cancel">Annuler</string>
     <string name="required_connexion_retry">Réessayer</string>
     <string name="dl_status">![CDATA[✔]]</string>
@@ -24,4 +23,5 @@
     <string name="getAllArticleContentmessage">Est vous sûre de vouloir télécharger de tout les contenus.</string>
     <string name="cancel">Annuler</string>
     <string name="oK">OK</string>
+    <string name="updated">La base de donnée est à jour</string>
 </resources>

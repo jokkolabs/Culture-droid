@@ -16,7 +16,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,22 +25,10 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.webkit.WebView;
 import android.widget.ListView;
-import android.widget.Toast;
-
-import com.orm.query.Condition;
 import com.orm.query.Select;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONArray;
 
 
 public class CultureHome extends ActionBarActivity
@@ -70,6 +57,7 @@ public class CultureHome extends ActionBarActivity
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
     }
 
     @Override
@@ -254,8 +242,6 @@ public class CultureHome extends ActionBarActivity
 
             mListView = (ListView) rootView.findViewById(R.id.list);
             context = container.getContext();
-            String urlJson = Constants.getUrl("articles.json");
-            new GetJson().execute(urlJson);
             setupUI();
             return rootView;
         }
@@ -281,7 +267,7 @@ public class CultureHome extends ActionBarActivity
                         articleElement.setEncodedThumbnail(String.valueOf(news.getThumbnail()));
                     }
                     articleElement.setTitle(news.getTitle());
-                    articleElement.setPublishedOn(Constants.formatDatime(news.getPublishedOn()));
+                    articleElement.setPublishedOn(Constants.dateToStrDate(news.getPublishedOn()));
                     articleElement.setContentSize(Constants.displaySizeForArticleContent(news));
                     articleElement.setLocal(news.getContent().toString() != "");
                     articleElements.add(articleElement);
@@ -291,107 +277,6 @@ public class CultureHome extends ActionBarActivity
             }
             mAdapter = new ArticleElementsAdapter(context, articleElements);
             mListView.setAdapter(mAdapter);
-        }
-
-        private class GetJson extends AsyncTask<String, Void, Void> {
-
-            JSONObject jObject;
-            JSONParser jParser = new JSONParser();
-
-            String data = null;
-            private ProgressDialog progressDialog;
-
-            public boolean isOnline() {
-                ConnectivityManager cm =
-                        (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo netInfo = cm.getActiveNetworkInfo();
-                if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-                    return true;
-                }
-                return false;
-            }
-
-            @Override
-            protected void onPreExecute() {
-                // Loading
-                if (!isOnline()) {
-                    Toast toast = Toast.makeText(context.getApplicationContext(), R.string.required_connexion_title,
-                            Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.CENTER|Gravity.CENTER, 0, 0);
-                    toast.show();
-                    return;
-                } else {
-                    progressDialog = Popups.getStandardProgressDialog(getActivity(), "",
-                            getString(R.string.loading), false);
-                    progressDialog.show();
-                }
-            }
-
-            @Override
-            protected Void doInBackground(String... params) {
-                try {
-                    data = JSONParser.getJSONFromUrl(params[0]);
-                } catch (Exception e) {
-                    Log.e(TAG, "doInBackground Exception" + e + "\nLe lien (url) vers la liste des articles est mort.");
-                    return null;
-                }
-                try {
-                    jObject = new JSONObject(data);
-                } catch (JSONException e) {
-                    Log.d(TAG, "JSONException " + e.toString());
-                }
-
-                List<HashMap<String, Object>> resources = null;
-                resources = jParser.parse(jObject);
-
-                for (HashMap<String, Object> article : resources) {
-                    String publishedOn = article.get(Constants.KEY_PUBLISHED_ON).toString();
-                    String articleId = article.get(Constants.KEY_ARTICLE_ID).toString();
-                    String thumbnail = article.get(Constants.KEY_THUMBNAIL).toString();
-                    String title = article.get(Constants.KEY_TITLE).toString();
-                    String nbComments = article.get(Constants.KEY_NB_COMMENTS).toString();
-                    String contentSize = article.get(Constants.KEY_CONTENT_SIZE).toString();
-                    String content = article.get(Constants.KEY_CONTENT).toString();
-                    JSONArray tags = (JSONArray) article.get(Constants.KEY_TAGS);
-                    List<ArticleData> news = ArticleData.find(ArticleData.class, "articleId = ?", articleId);
-                    if (news.isEmpty()) {
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        Date date = null;
-                        try {
-                            date = dateFormat.parse(publishedOn.replace("T", " "));
-                        } catch (ParseException e) {
-                            Log.d(TAG, "ParseException" + e.toString());
-                        }
-                        ArticleData articleData = new ArticleData(date,
-                                articleId,
-                                thumbnail,
-                                title,
-                                nbComments,
-                                contentSize,
-                                content);
-                        articleData.saveWithId();
-                        Log.d(TAG, "Creating article: "+ articleData.getArticleId() + " with ID: "+ articleData.getId());
-                        articleData.articleTagSave(Constants.listStringFromJsonArray(tags));
-                    } else {
-                    }
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                if (isOnline()) {
-                    try {
-                        if ((progressDialog != null) && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                        }
-                    } catch (final Exception e) {
-                        progressDialog = null;
-                    }
-                }
-                setupUI();
-            }
         }
 
         @Override

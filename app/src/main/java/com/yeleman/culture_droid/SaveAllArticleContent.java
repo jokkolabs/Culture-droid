@@ -59,13 +59,14 @@ public class SaveAllArticleContent extends Activity {
             // Loading
             if (!isOnline()) {
                 finish();
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        R.string.required_connexion_title, Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER|Gravity.CENTER, 0, 0);
-                toast.show();
+                Popups.toast(getApplicationContext(), R.string.required_connexion_body);
                 return;
             } else {
-
+                if (listArticle.isEmpty()){
+                    finish();
+                    Popups.toast(getApplicationContext(), R.string.updated);
+                    return;
+                }
                 progressDialog = Popups.getStandardProgressDialog(SaveAllArticleContent.this, "",
                         getString(R.string.getAllArticleContentmessage), false);
                 progressDialog.setMax(listArticle.size());

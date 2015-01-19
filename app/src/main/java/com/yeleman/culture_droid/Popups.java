@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.view.Gravity;
+import android.widget.Toast;
 
 
 public class Popups {
@@ -68,5 +70,12 @@ public class Popups {
             return true;
         }
         return false;
+    }
+
+    public static void toast (Context context , int msg) {
+
+        Toast toast = Toast.makeText(context, msg, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER|Gravity.CENTER, 0, 0);
+        toast.show();
     }
 }

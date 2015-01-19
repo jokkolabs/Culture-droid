@@ -62,7 +62,6 @@ public class ArticleContent extends Activity {
     public void setupUI() {
         Log.d(TAG, "setupUI");
         contentView = (WebView) findViewById(R.id.webView);
-       // contentView.loadDataWithBaseURL(Constants.nameDomaine, article.getContent(), "text/html", "UTF-8", "");
         contentView.loadDataWithBaseURL("file:///android_asset/", article.getContent(), "text/html", "utf-8", null);
 
     }
@@ -87,10 +86,7 @@ public class ArticleContent extends Activity {
             // Loading
             if (!isOnline()) {
                 finish();
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        R.string.required_connexion_title, Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER|Gravity.CENTER, 0, 0);
-                toast.show();
+                Popups.toast(getApplicationContext(), R.string.required_connexion_body);
                 return;
             } else {
                 progressDialog = Popups.getStandardProgressDialog(ArticleContent.this, "",
