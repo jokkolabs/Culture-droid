@@ -1,5 +1,8 @@
 package com.yeleman.culture_droid;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -97,6 +100,14 @@ public class Constants {
             Log.d(TAG, "ParseException" + e.toString());
         }
         return date;
+    }
+
+    public static void registerToNotifications(Context context) {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String registrationID = sharedPrefs.getString("registrationID", "");
+        if (registrationID.length() == 0) {
+            new GcmRegistrationAsyncTask(context).execute();
+        }
     }
 /*
     private static final int SECOND_MILLIS = 1000;

@@ -129,6 +129,8 @@ public class SaveAllArticleContent extends Activity {
                 } catch (final Exception e) {
                     progressDialog = null;
                 }
+                // registration to notifications
+                Constants.registerToNotifications(SaveAllArticleContent.this);
             }
             finish();
         }

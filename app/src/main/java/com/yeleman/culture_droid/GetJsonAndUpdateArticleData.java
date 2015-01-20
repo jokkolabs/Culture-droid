@@ -112,6 +112,8 @@ public class GetJsonAndUpdateArticleData extends AsyncTask<String, Void, Void> {
                 } catch (final Exception e) {
                     progressDialog = null;
                 }
+                // register to notifications if not already
+                Constants.registerToNotifications(context.getApplicationContext());
             }
         }
 

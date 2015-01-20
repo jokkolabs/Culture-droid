@@ -6,9 +6,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -57,7 +59,6 @@ public class CultureHome extends ActionBarActivity
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
-
     }
 
     @Override
@@ -191,8 +192,6 @@ public class CultureHome extends ActionBarActivity
             View rootView = inflater.inflate(R.layout.web_view, container,
                     false);
             contentView = (WebView) rootView.findViewById(R.id.webView);
-            String htmlString = "<Html><h1>DJ DASHI</h1></html>";
-            //contentView.loadDataWithBaseURL("file:///android_asset/", htmlString, "text/html", "utf-8", null);
             contentView.loadUrl("file:///android_asset/about.html");
             return rootView;
         }
