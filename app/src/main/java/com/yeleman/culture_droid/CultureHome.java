@@ -2,15 +2,9 @@ package com.yeleman.culture_droid;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -27,7 +21,7 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.webkit.WebView;
 import android.widget.ListView;
-import com.orm.query.Select;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +57,12 @@ public class CultureHome extends ActionBarActivity
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
+        if (position == 1) {
+            if(ArticleData.select().count() == 0 && !Tools.isOnline(CultureHome.this)) {
+                Tools.toast(getApplicationContext(), R.string.required_connexion_title);
+                return;
+            }
+        }
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
@@ -95,9 +95,6 @@ public class CultureHome extends ActionBarActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
             getMenuInflater().inflate(R.menu.culture_home, menu);
             restoreActionBar();
             return true;
@@ -107,9 +104,6 @@ public class CultureHome extends ActionBarActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -117,9 +111,9 @@ public class CultureHome extends ActionBarActivity
             return true;
         }
         if (id == R.id.all_dl) {
-            Intent intent = new Intent(
-                    getApplicationContext(),
-                    SaveAllArticleContent.class);
+             Intent intent = new Intent(
+                 getApplicationContext(),
+                     SaveAllArticleContent.class);
             startActivity(intent);
             return true;
         }
@@ -127,20 +121,10 @@ public class CultureHome extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
     public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
+
         private static final String ARG_SECTION_NUMBER = "section_number";
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
         public static PlaceholderFragment newInstance(int sectionNumber) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
@@ -168,7 +152,7 @@ public class CultureHome extends ActionBarActivity
     }
 
     /**
-     * AboutFrFragment
+     * AboutFragment
      */
     public static class AboutFragment extends Fragment {
 
@@ -213,7 +197,6 @@ public class CultureHome extends ActionBarActivity
         private Context context;
 
         private ArticleElementsAdapter mAdapter;
-        //private ViewGroup containers;
 
         public static ArticleFragment newInstance(int sectionNumber, String tagName) {
             ArticleFragment fragment = new ArticleFragment();
@@ -241,6 +224,10 @@ public class CultureHome extends ActionBarActivity
 
             mListView = (ListView) rootView.findViewById(R.id.list);
             context = container.getContext();
+            if(ArticleData.select().count() == 0) {
+                String urlJson = Constants.getUrl("articles.json");
+                new GetJsonAndUpdateArticleData(getActivity(), this).execute(urlJson);
+            }
             setupUI();
             return rootView;
         }
@@ -252,7 +239,7 @@ public class CultureHome extends ActionBarActivity
             List<ArticleData> articleDataList;
 
             if (tagName.equals(Constants.TAG_ALL)){
-                articleDataList = Select.from(ArticleData.class).orderBy("id").list();
+                articleDataList = ArticleData.select().orderBy("id").list();
             } else {
                 articleDataList = ArticleData.allByTagName(getArguments().getString("tag"));
             }

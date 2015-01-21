@@ -23,11 +23,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-/**
- * Fragment used for managing interactions for and presentation of a navigation drawer.
- * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
- * design guidelines</a> for a complete explanation of the behaviors implemented here.
- */
+
 public class NavigationDrawerFragment extends Fragment {
 
     private static final String TAG = Constants.getLogTag("NavigationDrawerFragment");
@@ -78,7 +74,7 @@ public class NavigationDrawerFragment extends Fragment {
 
         } else {
             String urlJson = Constants.getUrl("articles.json");
-            new GetJsonAndUpdateArticleData(getActivity()).execute(urlJson);
+            new GetJsonAndUpdateArticleData(getActivity(), null).execute(urlJson);
         }
         // Select either the default item (0) or the last selected item.
         selectItem(mCurrentSelectedPosition);
@@ -181,12 +177,6 @@ public class NavigationDrawerFragment extends Fragment {
             }
         };
 
-        // If the user hasn't 'learned' about the drawer, open it to introduce them to the drawer,
-        // per the navigation drawer design guidelines.
-        if (!mUserLearnedDrawer && !mFromSavedInstanceState) {
-            mDrawerLayout.openDrawer(mFragmentContainerView);
-        }
-
         // Defer code dependent on restoration of previous instance state.
         mDrawerLayout.post(new Runnable() {
             @Override
@@ -257,7 +247,6 @@ public class NavigationDrawerFragment extends Fragment {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-
         //if (item.getItemId() == R.id.action_example) {
         //    Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT).show();
         //    return true;
@@ -273,7 +262,7 @@ public class NavigationDrawerFragment extends Fragment {
     private void showGlobalContextActionBar() {
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayShowTitleEnabled(true);
-        //actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setTitle(R.string.app_name);
     }
 

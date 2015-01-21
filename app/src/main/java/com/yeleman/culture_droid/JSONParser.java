@@ -1,13 +1,5 @@
 package com.yeleman.culture_droid;
 
-import android.util.Log;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,17 +16,17 @@ public class JSONParser {
     // Receives a JSONObject and returns a list
     public List<HashMap<String,Object>> parse(JSONObject jObject){
 
-        JSONArray jResource = null;
+        JSONArray jArticle = null;
         try {
             // Retrieves all the elements in the 'countries' array
-            jResource = jObject.getJSONArray("article");
+            jArticle = jObject.getJSONArray("article");
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         // Invoking getResources with the array of json object
         // where each json object represent a resource
-        return getResource(jResource);
+        return getResource(jArticle);
     }
 
     private List<HashMap<String, Object>> getResource(JSONArray jResource){
@@ -59,7 +51,7 @@ public class JSONParser {
     // Parsing the Resource JSON object
     private HashMap<String, Object> getResource(JSONObject jResource){
 
-        HashMap<String, Object> resource = new HashMap<String, Object>();
+        HashMap<String, Object> articles = new HashMap<String, Object>();
         String published_on = "";
         String title =   "";
         String content_size ="";
@@ -78,54 +70,18 @@ public class JSONParser {
             thumbnail = jResource.getString(Constants.KEY_THUMBNAIL);
             content = "";
             tags = jResource.getJSONArray(Constants.KEY_TAGS);
-            resource.put(Constants.KEY_PUBLISHED_ON, published_on);
-            resource.put(Constants.KEY_TITLE, title);
-            resource.put(Constants.KEY_CONTENT_SIZE, content_size);
-            resource.put(Constants.KEY_ARTICLE_ID, articleId);
-            resource.put(Constants.KEY_NB_COMMENTS, nb_comments);
-            resource.put(Constants.KEY_THUMBNAIL, thumbnail);
-            resource.put(Constants.KEY_CONTENT, content);
-            resource.put(Constants.KEY_TAGS, tags);
+            articles.put(Constants.KEY_PUBLISHED_ON, published_on);
+            articles.put(Constants.KEY_TITLE, title);
+            articles.put(Constants.KEY_CONTENT_SIZE, content_size);
+            articles.put(Constants.KEY_ARTICLE_ID, articleId);
+            articles.put(Constants.KEY_NB_COMMENTS, nb_comments);
+            articles.put(Constants.KEY_THUMBNAIL, thumbnail);
+            articles.put(Constants.KEY_CONTENT, content);
+            articles.put(Constants.KEY_TAGS, tags);
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return resource;
-    }
-
-    public static String getJSONFromUrl(String strUrl) throws IOException {
-        String data = "";
-        InputStream iStream = null;
-        try{
-            URL url = new URL(strUrl);
-
-            // Creating an http connection to communicate with url
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-
-            // Connecting to url
-            urlConnection.connect();
-
-            // Reading data from url
-            iStream = urlConnection.getInputStream();
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
-
-            StringBuffer sb  = new StringBuffer();
-
-            String line = "";
-            while( ( line = br.readLine())  != null){
-                sb.append(line);
-            }
-
-            data = sb.toString();
-
-            br.close();
-
-        }catch(Exception e){
-            Log.d("Exception while downloading url", e.toString());
-        }finally{
-            iStream.close();
-        }
-        return data;
+        return articles;
     }
 }

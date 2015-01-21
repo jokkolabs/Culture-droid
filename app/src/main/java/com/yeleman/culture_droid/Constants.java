@@ -1,7 +1,10 @@
 package com.yeleman.culture_droid;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -26,6 +29,7 @@ public class Constants {
     private static final String TAG = Constants.getLogTag("Constants");
 
     protected static String nameDomaine = "192.168.5.55:8000";
+    public static String pathArticleHtml = "article_%s.html";
 
     public static final String KEY_THUMBNAIL = "thumbnail";
     public static final String KEY_TITLE = "title";
