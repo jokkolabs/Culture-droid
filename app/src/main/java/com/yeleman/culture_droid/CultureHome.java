@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -21,7 +20,6 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.webkit.WebView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,14 +109,16 @@ public class CultureHome extends ActionBarActivity
             return true;
         }
         if (id == R.id.all_dl) {
-             Intent intent = new Intent(
-                 getApplicationContext(),
-                     SaveAllArticleContent.class);
-            startActivity(intent);
+            Tools.downloadAllContent(CultureHome.this, null);
             return true;
         }
-
+        onResumeFragments();
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResumeFragments() {
+        super.onResumeFragments();
     }
 
     public static class PlaceholderFragment extends Fragment {
@@ -226,7 +226,7 @@ public class CultureHome extends ActionBarActivity
             context = container.getContext();
             if(ArticleData.select().count() == 0) {
                 String urlJson = Constants.getUrl("articles.json");
-                new GetJsonAndUpdateArticleData(getActivity(), this).execute(urlJson);
+                new GetJsonAndUpdateArticleData(getActivity(), this, false).execute(urlJson);
             }
             setupUI();
             return rootView;

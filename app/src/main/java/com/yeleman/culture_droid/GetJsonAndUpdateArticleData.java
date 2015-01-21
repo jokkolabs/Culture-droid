@@ -17,20 +17,22 @@ import java.util.List;
 
 public class GetJsonAndUpdateArticleData extends AsyncTask<String, Void, Void> {
 
-    private static final String TAG = Constants.getLogTag("CultureHome");
+    private static final String TAG = Constants.getLogTag("GetJsonAndUpdateArticleData");
 
     private final Activity context;
     private CultureHome.ArticleFragment fragment;
     private ProgressDialog progressDialog;
     boolean isOnline;
+    boolean contentArticle;
 
     JSONObject jObject;
     JSONParser jParser = new JSONParser();
     String data = null;
 
-    public GetJsonAndUpdateArticleData(Activity applicationContext, CultureHome.ArticleFragment fragment) {
+    public GetJsonAndUpdateArticleData(Activity applicationContext, CultureHome.ArticleFragment fragment, boolean contentArticle) {
          context = applicationContext;
          this.fragment = fragment;
+         this.contentArticle = contentArticle;
     }
 
     @Override
@@ -106,8 +108,10 @@ public class GetJsonAndUpdateArticleData extends AsyncTask<String, Void, Void> {
 
                     if (fragment != null) {
                         fragment.setupUI();
+                        if(contentArticle){
+                            new GetAndSaveAllArticleContent(context, fragment).execute();
+                        }
                     }
-
                     progressDialog.dismiss();
                 }
             } catch (final Exception e) {

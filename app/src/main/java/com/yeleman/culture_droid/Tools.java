@@ -43,7 +43,7 @@ public class Tools {
 
     public static void toast (Context context , int msg) {
         Toast toast = Toast.makeText(context, msg, Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.CENTER|Gravity.CENTER, 0, 0);
+        //toast.setGravity(Gravity.BOTTOM|Gravity.CENTER, 0, 0);
         toast.show();
     }
 
@@ -81,5 +81,15 @@ public class Tools {
             iStream.close();
         }
         return data;
+    }
+
+    public static void downloadAllContent(Activity activity, CultureHome.ArticleFragment fragment){
+
+        if (ArticleData.select().count() == 0) {
+            String urlJson = Constants.getUrl("articles.json");
+            new GetJsonAndUpdateArticleData(activity, fragment, true).execute(urlJson);
+        } else {
+            new GetAndSaveAllArticleContent(activity, fragment).execute();
+        }
     }
 }
