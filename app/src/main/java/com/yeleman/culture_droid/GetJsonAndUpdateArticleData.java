@@ -1,7 +1,6 @@
 package com.yeleman.culture_droid;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -40,13 +39,13 @@ public class GetJsonAndUpdateArticleData extends AsyncTask<String, Void, Void> {
         // Loading
         isOnline = Tools.isOnline(context);
         if (!isOnline) {
-
             if (ArticleData.select().count() == 0) {
                 //Tools.gotoAbout(context);
             }
             Tools.toast(context, R.string.required_connexion_body);
             return;
         } else {
+            Tools.lockScreenOrientation(context);
             progressDialog = Tools.getStandardProgressDialog(context,
                     "", context.getString(R.string.loading), false);
             progressDialog.show();
@@ -103,23 +102,18 @@ public class GetJsonAndUpdateArticleData extends AsyncTask<String, Void, Void> {
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
         if (isOnline) {
-            try {
-                if ((progressDialog != null) && progressDialog.isShowing()) {
-
-                    if (fragment != null) {
-                        fragment.setupUI();
-                    }
-                    if(contentArticle){
-                        new GetAndSaveAllArticleContent(context, fragment).execute();
-                    }
-                    progressDialog.dismiss();
-                }
-            } catch (final Exception e) {
-                progressDialog = null;
+            if (fragment != null) {
+                fragment.setupUI();
+            }
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+                Tools.unlockScreenOrientation(context);
+            }
+            if(contentArticle){
+                new GetAndSaveAllArticleContent(context, fragment).execute();
             }
             // register to notifications if not already
-            Constants.registerToNotifications(context.getApplicationContext());
+            Tools.registerToNotifications(context.getApplicationContext());
         }
     }
-
 }

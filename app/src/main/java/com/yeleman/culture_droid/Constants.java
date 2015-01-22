@@ -1,11 +1,5 @@
 package com.yeleman.culture_droid;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -15,8 +9,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -106,13 +98,6 @@ public class Constants {
         return date;
     }
 
-    public static void registerToNotifications(Context context) {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String registrationID = sharedPrefs.getString("registrationID", "");
-        if (registrationID.length() == 0) {
-            new GcmRegistrationAsyncTask(context).execute();
-        }
-    }
 /*
     private static final int SECOND_MILLIS = 1000;
     private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;

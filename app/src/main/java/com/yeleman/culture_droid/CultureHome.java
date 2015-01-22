@@ -109,13 +109,7 @@ public class CultureHome extends ActionBarActivity
             Tools.downloadAllContent(CultureHome.this, articleFrag);
             return true;
         }
-        onResumeFragments();
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onResumeFragments() {
-        super.onResumeFragments();
     }
 
     public static class PlaceholderFragment extends Fragment {

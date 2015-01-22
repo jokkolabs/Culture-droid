@@ -1,5 +1,6 @@
 package com.yeleman.culture_droid;
 
+import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -9,8 +10,6 @@ import android.util.Log;
 
 import com.orm.query.Condition;
 
-import java.io.IOException;
-import java.util.List;
 
 public class GetAndSaveAllArticleContent extends AsyncTask<String, Void, Void> {
 
@@ -34,6 +33,7 @@ public class GetAndSaveAllArticleContent extends AsyncTask<String, Void, Void> {
 
         isOnline = Tools.isOnline(context);
         listArticle = ArticleData.select().where(Condition.prop("content").eq("")).list();
+
         // Loading
         if (!isOnline) {
             Tools.toast(context, R.string.required_connexion_body);
@@ -43,15 +43,17 @@ public class GetAndSaveAllArticleContent extends AsyncTask<String, Void, Void> {
                 Tools.toast(context, R.string.updated);
                 return;
             }
+            Tools.lockScreenOrientation(context);
             progressDialog = Tools.getStandardProgressDialog(context, "",
                    context.getString(R.string.getAllArticleContentmessage), false);
             progressDialog.setMax(listArticle.size());
             progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            progressDialog.setMessage(context.getString(R.string.loading));
+            //progressDialog.setMessage(context.getString(R.string.loading));
             progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, context.getString(R.string.cancel), new DialogInterface.OnClickListener(){
                 public void onClick(DialogInterface dialog, int whichButton){
                     try {
                         finalize();
+                        Thread.interrupted();
                     } catch (Throwable throwable) {
                         throwable.printStackTrace();
                     }
@@ -88,8 +90,6 @@ public class GetAndSaveAllArticleContent extends AsyncTask<String, Void, Void> {
                 article.setContent(articleContent);
                 article.save();
                 progressDialog.incrementProgressBy(1);
-            } catch (IOException e) {
-                Log.d(TAG, "IOException " + e.toString());
             } catch (Exception e) {
                 Log.d(TAG, "Exception " + e.toString());
                 return null;
@@ -102,18 +102,15 @@ public class GetAndSaveAllArticleContent extends AsyncTask<String, Void, Void> {
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
         if (isOnline) {
-            try {
-                if ((progressDialog != null) && progressDialog.isShowing()) {
-                    if (fragment != null){
-                        fragment.setupUI();
-                    }
-                    progressDialog.dismiss();
-                }
-            } catch (final Exception e) {
-                progressDialog = null;
+            if (fragment != null){
+                fragment.setupUI();
+            }
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+                Tools.unlockScreenOrientation(context);
             }
             // registration to notifications
-            Constants.registerToNotifications(context);
+            Tools.registerToNotifications(context);
         }
     }
 }

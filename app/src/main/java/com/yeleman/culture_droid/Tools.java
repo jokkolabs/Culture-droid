@@ -4,8 +4,12 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
@@ -83,6 +87,13 @@ public class Tools {
         return data;
     }
 
+    public static void registerToNotifications(Context context) {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String registrationID = sharedPrefs.getString("registrationID", "");
+        if (registrationID.length() == 0) {
+            new GcmRegistrationAsyncTask(context).execute();
+        }
+    }
     public static void downloadAllContent(Activity activity, CultureHome.ArticleFragment fragment){
 
         if (ArticleData.select().count() == 0) {
@@ -91,5 +102,18 @@ public class Tools {
         } else {
             new GetAndSaveAllArticleContent(activity, fragment).execute();
         }
+    }
+
+    public static void lockScreenOrientation(Activity context) {
+        int currentOrientation = context.getResources().getConfiguration().orientation;
+        if (currentOrientation == Configuration.ORIENTATION_PORTRAIT) {
+            context.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        } else {
+            context.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+    }
+
+    public static void unlockScreenOrientation(Activity context) {
+        context.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
     }
 }
