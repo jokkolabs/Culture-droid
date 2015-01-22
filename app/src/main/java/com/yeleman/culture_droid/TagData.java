@@ -1,5 +1,6 @@
 package com.yeleman.culture_droid;
 
+import android.nfc.Tag;
 import android.util.Log;
 
 import com.orm.SugarRecord;
@@ -74,5 +75,9 @@ public class TagData extends SugarRecord {
             tagsListString.add(tag.getName());
         };
         return tagsListString;
+    }
+
+    public static Select<TagData> select() {
+        return Select.from(TagData.class);
     }
 }

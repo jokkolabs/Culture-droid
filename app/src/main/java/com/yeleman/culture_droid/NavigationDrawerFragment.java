@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class NavigationDrawerFragment extends Fragment {
@@ -106,13 +108,16 @@ public class NavigationDrawerFragment extends Fragment {
                 selectItem(position);
             }
         });
-        ArrayList<String> tagsListString = TagData.getListTags();
-        mDrawerListView.setAdapter(new ArrayAdapter<String>(
-                getActionBar().getThemedContext(),
-                android.R.layout.simple_list_item_1,
-                android.R.id.text1,
-                tagsListString
-        ));
+        ArrayList<String> tagDataList = TagData.getListTags();
+        ArrayList<TagElement> tagElements = new ArrayList<>();
+        TagElement tagElement;
+        for (String tagName : tagDataList) {
+            tagElement = new TagElement();
+            tagElement.setTagName(tagName);
+            tagElements.add(tagElement);
+        }
+        TagElementsAdapter mAdapter = new TagElementsAdapter(getActivity(), tagElements);
+        mDrawerListView.setAdapter(mAdapter);
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
     }
 
@@ -137,6 +142,7 @@ public class NavigationDrawerFragment extends Fragment {
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
+
 
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the navigation drawer and the action bar app icon.
@@ -247,6 +253,7 @@ public class NavigationDrawerFragment extends Fragment {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
+
         //if (item.getItemId() == R.id.action_example) {
         //    Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT).show();
         //    return true;

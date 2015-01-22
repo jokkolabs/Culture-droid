@@ -108,9 +108,9 @@ public class GetJsonAndUpdateArticleData extends AsyncTask<String, Void, Void> {
 
                     if (fragment != null) {
                         fragment.setupUI();
-                        if(contentArticle){
-                            new GetAndSaveAllArticleContent(context, fragment).execute();
-                        }
+                    }
+                    if(contentArticle){
+                        new GetAndSaveAllArticleContent(context, fragment).execute();
                     }
                     progressDialog.dismiss();
                 }

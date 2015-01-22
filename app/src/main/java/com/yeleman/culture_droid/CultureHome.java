@@ -38,6 +38,7 @@ public class CultureHome extends ActionBarActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
+    private static ArticleFragment articleFrag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,12 +105,8 @@ public class CultureHome extends ActionBarActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
         if (id == R.id.all_dl) {
-            Tools.downloadAllContent(CultureHome.this, null);
+            Tools.downloadAllContent(CultureHome.this, articleFrag);
             return true;
         }
         onResumeFragments();
@@ -224,11 +221,13 @@ public class CultureHome extends ActionBarActivity
 
             mListView = (ListView) rootView.findViewById(R.id.list);
             context = container.getContext();
+            articleFrag = this;
             if(ArticleData.select().count() == 0) {
                 String urlJson = Constants.getUrl("articles.json");
                 new GetJsonAndUpdateArticleData(getActivity(), this, false).execute(urlJson);
             }
             setupUI();
+
             return rootView;
         }
 
@@ -254,7 +253,6 @@ public class CultureHome extends ActionBarActivity
                     }
                     articleElement.setTitle(news.getTitle());
                     articleElement.setPublishedOn(Constants.formatDateToStrDate(news.getPublishedOn()));
-                    //articleElement.setPublishedOn(Constants.getTimeAgo(news.getPublishedOn().getTime()));
                     articleElement.setContentSize(Constants.displaySizeForArticleContent(news));
                     articleElement.setLocal(news.getContent().toString() != "");
                     articleElements.add(articleElement);
