@@ -2,6 +2,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".CultureHome">
      <item android:id="@+id/all_dl" android:title="@string/all_dl"
-         android:icon="@drawable/downicon"
+         android:icon="@android:drawable/stat_sys_download"
         app:showAsAction="withText|ifRoom" />
 </menu>

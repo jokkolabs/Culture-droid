@@ -5,7 +5,7 @@
     android:descendantFocusability="blocksDescendants"
     android:id="@+id/rowLayout"
     android:orientation="horizontal"
-    android:background="@drawable/abc_textfield_search_activated_mtrl_alpha">
+    android:background="@color/background_material_light">
 
     <ImageView
         android:layout_width="wrap_content"

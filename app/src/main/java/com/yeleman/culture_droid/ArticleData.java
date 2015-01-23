@@ -114,7 +114,6 @@ public class ArticleData extends SugarRecord {
     public static List<ArticleData> allByTagName(String tagName) {
         List<ArticleData> articleDataList = new ArrayList<ArticleData>();
         Long tagId = TagData.getByName(tagName).getId();
-        Log.d(TAG, "allByTagName: " + tagName + " / " + tagId);
         for(TagArticleData tagArticle : Select.from(TagArticleData.class).where(Condition.prop("TAGID").eq(tagId)).list()){
             ArticleData article = Select.from(ArticleData.class).where(Condition.prop("id").eq(tagArticle.getArticleID())).first();
             if (article != null) {

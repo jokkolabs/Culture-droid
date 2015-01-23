@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import static com.yeleman.culture_droid.R.drawable.*;
 
 
 public class TagElementsAdapter extends BaseAdapter {
@@ -57,6 +61,11 @@ public class TagElementsAdapter extends BaseAdapter {
          if( position > 1) {
              image.setImageResource(R.drawable.downicon);
          }*/
+
+        if (position == 1){
+            tagName.setTypeface(null, Typeface.BOLD);
+           // tagName.setPaintFlags(tagName.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        }
         return convertView;
     }
 }
