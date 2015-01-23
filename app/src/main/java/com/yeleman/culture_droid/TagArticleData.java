@@ -58,7 +58,6 @@ public class TagArticleData extends SugarRecord {
             //Log.e(TAG, e.toString());
             ta = new TagArticleData(tagId, articleId);
             ta.saveWithId();
-            Log.i(TAG, "Save TagArticle");
         }
         return ta;
     }

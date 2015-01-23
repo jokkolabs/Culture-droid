@@ -97,8 +97,7 @@ public class Tools {
     public static void downloadAllContent(Activity activity, CultureHome.ArticleFragment fragment){
 
         if (ArticleData.select().count() == 0) {
-            String urlJson = Constants.getUrl("articles.json");
-            new GetJsonAndUpdateArticleData(activity, fragment, true).execute(urlJson);
+            new GetJsonAndUpdateArticleData(activity, fragment, true).execute(Constants.getUrlJson());
         } else {
             new GetAndSaveAllArticleContent(activity, fragment).execute();
         }

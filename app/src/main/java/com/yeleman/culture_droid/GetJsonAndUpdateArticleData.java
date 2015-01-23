@@ -56,6 +56,7 @@ public class GetJsonAndUpdateArticleData extends AsyncTask<String, Void, Void> {
     protected Void doInBackground(String... params) {
         try {
             data = Tools.getFromUrl(params[0]);
+            Log.d(TAG, params[0]);
         } catch (Exception e) {
             Log.e(TAG, "doInBackground Exception" + e + "\nLe lien (url) vers la liste des articles est mort.");
             return null;
@@ -108,9 +109,6 @@ public class GetJsonAndUpdateArticleData extends AsyncTask<String, Void, Void> {
             if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
                 Tools.unlockScreenOrientation(context);
-            }
-            if(contentArticle){
-                new GetAndSaveAllArticleContent(context, fragment).execute();
             }
             // register to notifications if not already
             Tools.registerToNotifications(context.getApplicationContext());

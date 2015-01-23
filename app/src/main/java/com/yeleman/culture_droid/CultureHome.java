@@ -217,8 +217,7 @@ public class CultureHome extends ActionBarActivity
             context = container.getContext();
             articleFrag = this;
             if(ArticleData.select().count() == 0) {
-                String urlJson = Constants.getUrl("articles.json");
-                new GetJsonAndUpdateArticleData(getActivity(), this, false).execute(urlJson);
+                new GetJsonAndUpdateArticleData(getActivity(), this, false).execute(Constants.getUrlJson());
             }
             setupUI();
 

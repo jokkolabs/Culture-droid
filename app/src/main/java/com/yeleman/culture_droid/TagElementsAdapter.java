@@ -61,10 +61,9 @@ public class TagElementsAdapter extends BaseAdapter {
          if( position > 1) {
              image.setImageResource(R.drawable.downicon);
          }*/
-
-        if (position == 1){
+        tagName.setTypeface(null, Typeface.NORMAL);
+        if (tagElements.get(position).getTagName().equals(Constants.TAG_ALL)){
             tagName.setTypeface(null, Typeface.BOLD);
-           // tagName.setPaintFlags(tagName.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         }
         return convertView;
     }

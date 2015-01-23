@@ -20,7 +20,8 @@ public class Constants {
 
     private static final String TAG = Constants.getLogTag("Constants");
 
-    protected static String nameDomaine = "192.168.5.55:8000";
+    //protected static String nameDomaine = "192.168.5.55:8000";
+    protected static String nameDomaine = "http://bamako.jokkolabs.net/culture-mali";
     public static String pathArticleHtml = "article_%s.html";
 
     public static final String KEY_THUMBNAIL = "thumbnail";
@@ -50,8 +51,17 @@ public class Constants {
         return String.format("CultureLog-%s", activity);
     }
 
+    public static String getUrlJson() {
+
+        String nameJson = "articles.json";
+        if (ArticleData.select().count() != 0) {
+            nameJson = String.format("articles_%s.json", ArticleData.select().orderBy("id").first().getArticleId());
+        }
+        return Constants.getUrl(nameJson);
+    }
+
     public static String getUrl(String page)  {
-        return String.format("http://%s/%s", nameDomaine, page);
+        return String.format("%s/%s", nameDomaine, page);
     }
 
     public static String convertSizeOctToKo(String strSize) {

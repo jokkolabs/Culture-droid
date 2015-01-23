@@ -57,8 +57,7 @@ public class NavigationDrawerFragment extends Fragment {
         if (savedInstanceState != null) {
             mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
         } else {
-            String urlJson = Constants.getUrl("articles.json");
-            new GetJsonAndUpdateArticleData(getActivity(), null, false).execute(urlJson);
+            new GetJsonAndUpdateArticleData(getActivity(), null, false).execute(Constants.getUrlJson());
         }
         // Select either the default item (0) or the last selected item.
         selectItem(mCurrentSelectedPosition);

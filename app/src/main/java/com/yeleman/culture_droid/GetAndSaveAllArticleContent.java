@@ -45,7 +45,7 @@ public class GetAndSaveAllArticleContent extends AsyncTask<String, Void, Void> {
             }
             Tools.lockScreenOrientation(context);
             progressDialog = Tools.getStandardProgressDialog(context, "",
-                   context.getString(R.string.getAllArticleContentmessage), false);
+                   context.getString(R.string.loading), false);
             progressDialog.setMax(listArticle.size());
             progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
             //progressDialog.setMessage(context.getString(R.string.loading));
