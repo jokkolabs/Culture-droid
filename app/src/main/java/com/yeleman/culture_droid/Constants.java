@@ -20,8 +20,8 @@ public class Constants {
 
     private static final String TAG = Constants.getLogTag("Constants");
 
-    //protected static String nameDomaine = "192.168.5.55:8000";
-    protected static String nameDomaine = "http://bamako.jokkolabs.net/culture-mali";
+    //protected static String nameDomaine = "http://bamako.jokkolabs.net/culture-mali";
+    protected static String nameDomaine =  "https://raw.githubusercontent.com/jokkolabs/culture-mali/gh-pages";
     public static String pathArticleHtml = "article_%s.html";
 
     public static final String KEY_THUMBNAIL = "thumbnail";
@@ -55,7 +55,8 @@ public class Constants {
 
         String nameJson = "articles.json";
         if (ArticleData.select().count() != 0) {
-            nameJson = String.format("articles_%s.json", ArticleData.select().orderBy("id").first().getArticleId());
+            nameJson = String.format("articles_%s.json",
+                    ArticleData.select().orderBy("-ARTICLEID").first().getArticleId());
         }
         return Constants.getUrl(nameJson);
     }
@@ -66,7 +67,7 @@ public class Constants {
 
     public static String convertSizeOctToKo(String strSize) {
         int sizeKo = Integer.valueOf(strSize) / 1024;
-        return String.valueOf(sizeKo) + "k";
+        return      String.valueOf(sizeKo) + "k";
     }
 
     public static String displaySizeForArticleContent(ArticleData newsData) {

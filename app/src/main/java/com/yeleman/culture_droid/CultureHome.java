@@ -239,7 +239,6 @@ public class CultureHome extends ActionBarActivity
             }
             try {
                 for (ArticleData news : articleDataList) {
-                    Log.d(TAG, news.getId() + ": " + news.getTitle());
                     articleElement = new ArticleElement();
                     articleElement.setArticleId(Integer.parseInt(String.valueOf(news.getArticleId())));
                     if (String.valueOf(news.getThumbnail()).equals("null")) {
