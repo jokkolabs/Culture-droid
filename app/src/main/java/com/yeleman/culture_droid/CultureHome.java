@@ -225,18 +225,21 @@ public class CultureHome extends ActionBarActivity
         }
 
         public void setupUI() {
+            Log.d(TAG, "setupUI");
+
             String tagName = getArguments().getString("tag");
             ArticleElement articleElement;
             ArrayList<ArticleElement> articleElements = new ArrayList<ArticleElement>();
-            List<ArticleData> articleDataList;
+            List<ArticleData> articleDataList = null;
 
             if (tagName.equals(Constants.TAG_ALL)){
-                articleDataList = ArticleData.select().orderBy("id").list();
+                articleDataList = ArticleData.select().orderBy("-PUBLISHEDON").list();
             } else {
                 articleDataList = ArticleData.allByTagName(getArguments().getString("tag"));
             }
             try {
                 for (ArticleData news : articleDataList) {
+                    Log.d(TAG, news.getId() + ": " + news.getTitle());
                     articleElement = new ArticleElement();
                     articleElement.setArticleId(Integer.parseInt(String.valueOf(news.getArticleId())));
                     if (String.valueOf(news.getThumbnail()).equals("null")) {
