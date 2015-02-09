@@ -9,6 +9,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.nfc.Tag;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
@@ -52,6 +53,7 @@ public class Tools {
     }
 
     public static String getFromUrl(String strUrl) throws IOException {
+        Log.d(Constants.getLogTag("getFromUrl: "), strUrl.toString());
         String data = "";
         InputStream iStream = null;
         try{
@@ -80,7 +82,7 @@ public class Tools {
             br.close();
 
         }catch(Exception e){
-            Log.d("Exception while downloading url", e.toString());
+            Log.d(Constants.getLogTag("Exception while downloading url"), e.toString());
         }finally{
             iStream.close();
         }

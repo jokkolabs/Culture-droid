@@ -219,8 +219,6 @@ public class CultureHome extends ActionBarActivity
             if(ArticleData.select().count() == 0) {
                 new GetJsonAndUpdateArticleData(getActivity(), this, false).execute(Constants.getUrlJson());
             }
-            setupUI();
-
             return rootView;
         }
 
@@ -239,7 +237,6 @@ public class CultureHome extends ActionBarActivity
             }
             try {
                 for (ArticleData news : articleDataList) {
-                    Log.d(TAG, news.getId() + ": " + news.getTitle());
                     articleElement = new ArticleElement();
                     articleElement.setArticleId(Integer.parseInt(String.valueOf(news.getArticleId())));
                     if (String.valueOf(news.getThumbnail()).equals("null")) {
