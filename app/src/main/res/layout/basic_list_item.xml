@@ -5,7 +5,7 @@
     android:descendantFocusability="blocksDescendants"
     android:id="@+id/rowLayout"
     android:orientation="horizontal"
-    android:background="@color/background_material_light">
+    android:background="#ffffffff">
 
     <ImageView
         android:layout_width="wrap_content"
@@ -33,11 +33,12 @@
         android:layout_gravity="bottom"
         android:layout_alignParentTop="true"
         android:minHeight="40dp"
-        android:layout_toEndOf="@+id/thumbnail"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
         android:singleLine="true"
         android:text="culture "
-        android:paddingRight="10dp" />
+        android:paddingRight="10dp"
+        android:layout_alignLeft="@+id/contentSize"
+        android:layout_alignStart="@+id/contentSize" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -61,7 +62,6 @@
         android:layout_weight="0.50"
         android:layout_alignParentLeft="false"
         android:layout_alignParentStart="false"
-        android:layout_toStartOf="@+id/publishedOn"
         android:layout_toRightOf="@+id/thumbnail"
         android:layout_below="@+id/title"
         android:text="99k" />
