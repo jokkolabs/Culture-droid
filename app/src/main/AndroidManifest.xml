@@ -46,10 +46,6 @@
             android:name=".ArticleContent"
             android:label="@string/app_name" >
         </activity>
-        <activity
-            android:name=".SaveAllArticleContent"
-            android:label="@string/app_name" >
-        </activity>
 
         <receiver
             android:name=".GcmBroadcastReceiver"

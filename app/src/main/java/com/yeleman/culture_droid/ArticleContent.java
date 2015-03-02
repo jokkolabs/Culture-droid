@@ -39,6 +39,7 @@ public class ArticleContent extends Activity {
     public void setupUI() {
         Log.d(TAG, "setupUI");
         contentView = (WebView) findViewById(R.id.webView);
+        contentView.getSettings().setBuiltInZoomControls(true);
         contentView.loadDataWithBaseURL("file:///android_asset/", article.getContent(), "text/html", "utf-8", null);
 
     }
