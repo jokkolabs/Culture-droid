@@ -167,6 +167,7 @@ public class CultureHome extends ActionBarActivity
             View rootView = inflater.inflate(R.layout.web_view, container,
                     false);
             contentView = (WebView) rootView.findViewById(R.id.webView);
+            contentView.getSettings().setBuiltInZoomControls(true);
             contentView.loadUrl("file:///android_asset/about.html");
             return rootView;
         }
