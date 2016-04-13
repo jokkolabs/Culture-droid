@@ -1,7 +1,5 @@
 package com.yeleman.culture_droid;
 
-import android.util.Log;
-
 import com.orm.SugarRecord;
 import com.orm.dsl.Ignore;
 import com.orm.query.Condition;

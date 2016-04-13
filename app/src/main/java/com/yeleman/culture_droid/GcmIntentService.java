@@ -1,15 +1,19 @@
 package com.yeleman.culture_droid;
 
+import android.annotation.TargetApi;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v7.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -57,21 +61,38 @@ public class GcmIntentService extends IntentService {
     /**
      * Issues a notification to inform the user that server has sent a message.
      */
-    private static void generateNotification(Context context, String message) {
-        int icon = R.drawable.ic_launcher;
-        long when = System.currentTimeMillis();
-        Intent notificationIntent = new Intent(context, CultureHome.class);
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private void generateNotification(Context context, String message) {
         String title = context.getString(R.string.app_name);
-        Notification notification = new Notification(icon, message, when);
 
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent intent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
-        notification.setLatestEventInfo(context, title, message, intent);
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
-        notification.sound = Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.notif);
-        notification.defaults = Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE;
-        notificationManager.notify(0, notification);
+        NotificationCompat.Builder mBuilder =
+                (NotificationCompat.Builder) new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setContentTitle(title)
+                        .setContentText(message)
+                        .setSound(Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.notif));
+        //notification.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);
+        //notificationManager.notify("", 0, notification);
+    // Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(this, CultureHome.class);
+    // The stack builder object will contain an artificial back stack for the
+    // started Activity.
+    // This ensures that navigating backward from the Activity leads out of
+    // your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+    // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(CultureHome.class);
+    // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+    // mId allows you to update the notification later on.
+        mNotificationManager.notify(9999, mBuilder.build());
     }
 }
